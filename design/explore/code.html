@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#4edea3",
+              "on-primary-container": "#00422b",
+              "inverse-primary": "#006c49",
+              "surface-variant": "#2d3449",
+              "tertiary-fixed-dim": "#ffb3af",
+              "on-tertiary": "#650911",
+              "error-container": "#93000a",
+              "surface-container-high": "#222a3d",
+              "on-primary-fixed-variant": "#005236",
+              "outline-variant": "#3c4a42",
+              "surface-container-low": "#131b2e",
+              "on-primary-fixed": "#002113",
+              "surface-dim": "#0b1326",
+              "on-tertiary-container": "#711419",
+              "surface-container-lowest": "#060e20",
+              "on-surface": "#dae2fd",
+              "secondary": "#adc6ff",
+              "on-surface-variant": "#bbcabf",
+              "surface-container": "#171f33",
+              "primary-container": "#10b981",
+              "on-background": "#dae2fd",
+              "secondary-container": "#0566d9",
+              "on-tertiary-fixed-variant": "#842225",
+              "surface-container-highest": "#2d3449",
+              "inverse-on-surface": "#283044",
+              "surface-bright": "#31394d",
+              "on-primary": "#003824",
+              "on-secondary-container": "#e6ecff",
+              "outline": "#86948a",
+              "on-error-container": "#ffdad6",
+              "on-error": "#690005",
+              "tertiary-fixed": "#ffdad7",
+              "tertiary-container": "#fc7c78",
+              "on-secondary-fixed-variant": "#004395",
+              "secondary-fixed-dim": "#adc6ff",
+              "surface": "#0b1326",
+              "primary": "#4edea3",
+              "error": "#ffb4ab",
+              "on-secondary": "#002e6a",
+              "on-tertiary-fixed": "#410005",
+              "tertiary": "#ffb3af",
+              "on-secondary-fixed": "#001a42",
+              "surface-tint": "#4edea3",
+              "inverse-surface": "#dae2fd",
+              "secondary-fixed": "#d8e2ff",
+              "primary-fixed": "#6ffbbe",
+              "background": "#0b1326"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #0b1326;
+        color: #dae2fd;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Persistent with Glassmorphism) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-white/5 backdrop-blur-2xl border-r border-white/10 shadow-2xl z-50">
+<div class="flex flex-col p-6 gap-8 h-full">
+<!-- Brand -->
+<div class="flex flex-col gap-1">
+<span class="text-2xl font-bold tracking-tighter text-emerald-400 font-headline">Sunny</span>
+<span class="font-manrope text-sm tracking-tight text-slate-400">UofT Computer Engineering</span>
+</div>
+<!-- Main Navigation -->
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-emerald-200 transition-colors transition-all duration-300 ease-in-out hover:bg-white/5 rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform" data-icon="person_search">person_search</span>
+<span class="font-manrope text-sm tracking-tight">For You</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-emerald-400 font-bold border-r-2 border-emerald-400 transition-all duration-300 ease-in-out bg-emerald-500/10 rounded-l-lg" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-manrope text-sm tracking-tight">Explore</span>
+</a>
+</nav>
+<!-- Activity Feed Section -->
+<div class="mt-4 flex flex-col gap-6">
+<div class="flex flex-col gap-3">
+<h3 class="text-[10px] uppercase tracking-widest text-secondary font-label font-bold opacity-80">Activity Feed</h3>
+<div class="flex flex-col gap-4">
+<!-- Last Commit -->
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500">Last Commit</span>
+<div class="p-3 rounded bg-white/5 text-xs text-primary-fixed-dim font-mono border-l-2 border-primary-container backdrop-blur-md">
+                            Updated Chrome Ext manifest
+                        </div>
+</div>
+<!-- Project Progress -->
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500">Project Progress</span>
+<div class="flex flex-col gap-2">
+<span class="text-xs text-on-surface">Robot Arm Automation</span>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-3/4"></div>
+</div>
+<span class="text-[10px] text-secondary text-right">75%</span>
+</div>
+</div>
+<!-- Physical Stats -->
+<div class="flex flex-col gap-1">
+<span class="text-[10px] text-slate-500">Power Clean 3RM</span>
+<div class="flex items-baseline gap-2">
+<span class="text-lg font-bold font-headline text-on-surface">100</span>
+<span class="text-xs text-slate-500">kg</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Attached to Sidebar Bottom) -->
+<div class="mt-auto pt-6 border-t border-white/10">
+<div class="flex justify-between items-center mb-4">
+<a class="text-slate-500 hover:text-emerald-300 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="code">code</span></a>
+<a class="text-slate-500 hover:text-emerald-300 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="account_circle">account_circle</span></a>
+<a class="text-slate-500 hover:text-emerald-300 transition-colors" href="#"><span class="material-symbols-outlined" data-icon="description">description</span></a>
+</div>
+<p class="font-inter text-[10px] text-slate-500 leading-tight">© 2024 Sunny • Luminous Logic</p>
+</div>
+</div>
+</aside>
+<!-- Mobile Header (TopAppBar) -->
+<header class="fixed top-0 w-full z-50 lg:hidden bg-slate-950/80 backdrop-blur-md border-b border-emerald-500/10 flex justify-between items-center px-4 h-14">
+<span class="text-lg font-bold text-slate-100 font-headline">Sunny • UofT</span>
+<button class="text-emerald-400 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 min-h-screen p-6 pt-20 lg:pt-12 pb-24 lg:pb-12 bg-surface">
+<div class="max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<span class="text-secondary text-xs font-bold uppercase tracking-widest font-label mb-2 block">Engineering Feed</span>
+<h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tight text-on-surface">
+                    Luminous <span class="text-primary-fixed-dim">Logic</span>
+</h1>
+<p class="mt-4 text-on-surface-variant text-lg leading-relaxed font-body">
+                    Exploring the intersection of high-performance engineering and visual architecture.
+                </p>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+<span class="px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container text-xs font-bold whitespace-nowrap">All Projects</span>
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-secondary text-xs font-medium whitespace-nowrap hover:bg-surface-container-highest transition-colors cursor-pointer">Hardware</span>
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-secondary text-xs font-medium whitespace-nowrap hover:bg-surface-container-highest transition-colors cursor-pointer">Machine Learning</span>
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-secondary text-xs font-medium whitespace-nowrap hover:bg-surface-container-highest transition-colors cursor-pointer">Low-Level</span>
+</div>
+</div>
+<!-- YouTube-style Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Project Card 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="3D Robot Arm" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5EeICkdR8quUyz9n2H7Oo3DoiMIP62jQXYKY8mZPCcTFYNkUZ3GFttIXQGL00cV0EMz667ZlOANOWFaO0oCrxhLZbDXPTPE4_gR1-t6ToYNO9E1ryRppMSreq5D5ncJhCTvwHWR1sGvIIa27WyUtF33dKk8qAR5DgVVUsTXskULdlR3luo0kowrRgAealQrl1mZVvOC77rTMFB5-eElBIArzLES6mEtbClB2ugqDqjHlFvX3tfoSUM1FMEd17ZRIvX2_RY3MLjgw"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">12:45</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">Watch Build Process →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">Why I'm Building a 6-DOF Robot Arm for my Dorm</h3>
+<p class="text-slate-500 text-sm font-body">Hardware Engineering • 15k views • 2 days ago</p>
+</div>
+</div>
+</div>
+<!-- Project Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Matrix Code Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxPmNhRhZc_RlEThGxtNZT83Y58yzQSNaA0PiHkX8CGjS8Hsp8rxkdlL1TfLgy7NMSzSV1k6TBELyR07pBw9rulvT7t1lRTlUc9WEZ538zEjK2C9-pul_2ay2gsHtyD934AkCAus7FfHFzDa31sSkzoUooPbD5zUzXjZZYFR7g3EJHVtDrjEf51z37aA153cKZwUcv74PngNGMWnLFqb8SBzMse0patb_exWA2Y08pdEOs5TJX6EE8ywmmRBjtReW5vO1_ebB4PMc"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">08:12</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">View Source Code →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="terminal">terminal</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">Writing a Kernel in Rust: Day 45 Update</h3>
+<p class="text-slate-500 text-sm font-body">Operating Systems • 42k views • 1 week ago</p>
+</div>
+</div>
+</div>
+<!-- Project Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Neural Network Visualization" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv6g7TY11_ZyZ4nsq1mor_SXbQ_QMcIEb-7y4n3Nots9rd-uR8KOFW_7FTeo_ckXcul5-8w1yBMejDmoyZhSMnAhN5jKzcaD0Ocr5kVwIUHfMjcm14AfM6qdw1UkZ9U-OzTU2673YQclF7DmGcwdnZy38JvD0ouLzMzh99XBJhhUKHnohj9zuUdS1IMRsJcLYejaRTjst-wG3Bv9READ35DHmCPSseRfUzSSRVu3dgl6gU2QnD7kO3aEGKZBCz6HVqoEsPwBm-VLA"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">15:02</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">Read Thesis →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary" data-icon="psychology">psychology</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">Training LLMs on $0: A Computer Engineer's Guide</h3>
+<p class="text-slate-500 text-sm font-body">Machine Learning • 108k views • 3 weeks ago</p>
+</div>
+</div>
+</div>
+<!-- Project Card 4 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Circuit Board Close-up" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNdNqTfwwtDDQFB-ggq_qQJaFxpJ5gdL_rUk_eHLeRt5676_HainL4trpEpJFRc_WXdQYDArqvyEux4IP0R7dHBR4ERJhOiHqr8lADnLZuI7rzfi0U6f7vWtGnHFP3pVjVF4kq2evlqe5CamswZ9zpZ4v8Z4e7L8n0whqcnwsNf4vvqntoto5R1b1KbP0WG8D0gWQ6vMjKhboxcl8FfkdjB3CVBqlkxbLa6OrgL3Qi2GLyrY_YEQUTElSdEMrFf_hF0bc5vHPCfp0"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">22:10</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">See Schematic →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error" data-icon="memory">memory</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">Overclocking the ESP32 until it Melts</h3>
+<p class="text-slate-500 text-sm font-body">Embedded Systems • 89k views • 1 month ago</p>
+</div>
+</div>
+</div>
+<!-- Project Card 5 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Industrial Mechanical Part" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA77D79c6LAg4A2CI3Y-rlSvGd5aT_LikeiLBgTrF21Z2DcYa1US9WG-qv5fZiDQepgUCNl7npt9L_pYdo9Tybd_oJsgC886DLJkQFD5pOLjATupB8JEVW7YL94QvNIz4k-3QJn7ivPW-oleegOfFlmarVw2AEmTSoh3jnWAt5X4C6LpLKOtBaIjcK8ZoidZzAcpyITg6JAnW4O8gewf0mZ89FJMd0yxcQTc5-Akpgjvqx-zzcgur9C8j5S96FfQMLmDXLNy7GqpWk"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">10:30</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">Watch Test Run →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="settings_suggest">settings_suggest</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">Autonomous Sorting System: v2.0 Reveal</h3>
+<p class="text-slate-500 text-sm font-body">Automation • 5k views • 2 months ago</p>
+</div>
+</div>
+</div>
+<!-- Project Card 6 -->
+<div class="group cursor-pointer">
+<div class="aspect-video relative rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Abstract Data Cables" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSSq0muOaJzn6WqUQK7h5KThJb2V1V1xDCIBkILLcN1AUbp9hjTzpKQsHYwtFIR-SHxy5266XiDBx8UCh7-fRdRG-B6XOvF90DArCPCkwvwwRBF5aMKkG0BVLgEzohF9V0QVIBisHOdl2Xrdh50_LdMjDdufk_WdHOBMM-eyQdsFhhtp9MvAcd82FffmsWefptxtZDEqxYIxL1WdaGR4ZlKNo0FxXYm7r44C5s7bE0YFJ8pMTQCTC4DiHCgxr3X74QPIVKiarf3z0"/>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/80 backdrop-blur text-[10px] font-bold text-white rounded">06:20</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-primary-fixed-dim text-xs font-bold">Network Map →</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="router">router</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-on-surface font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">The Engineering Behind a Custom Tor Node</h3>
+<p class="text-slate-500 text-sm font-body">Cybersecurity • 27k views • 3 months ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-6 pb-4 pt-2 lg:hidden bg-slate-950/90 backdrop-blur-lg border-t border-emerald-500/10 z-50 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-slate-500 tap-highlight-transparent active:opacity-70 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="font-inter text-[10px] uppercase tracking-widest mt-1">For You</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-400 bg-emerald-500/10 rounded-xl px-6 py-1 tap-highlight-transparent active:opacity-70 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-inter text-[10px] uppercase tracking-widest mt-1">Explore</span>
+</a>
+</nav>
+</body></html>
