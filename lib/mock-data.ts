@@ -8,7 +8,7 @@ export interface Project {
   isHobby: boolean;
   bgFrom: string; // gradient placeholder
   bgTo: string;
-  hashtags: string; // comma-separated display tags shown on video
+  tags: string; // comma-separated display tags shown on video
 }
 
 export interface Post {
@@ -53,7 +53,7 @@ export const mockProjects: Project[] = [
     isHobby: false,
     bgFrom: "#061a1a",
     bgTo: "#0b2d25",
-    hashtags: "DISTRIBUTED SYSTEMS,RUST",
+    tags: "DISTRIBUTED SYSTEMS,RUST",
   },
   {
     id: "robot-arm",
@@ -66,7 +66,7 @@ export const mockProjects: Project[] = [
     isHobby: false,
     bgFrom: "#0a1020",
     bgTo: "#12203a",
-    hashtags: "HARDWARE,ROBOTICS",
+    tags: "HARDWARE,ROBOTICS",
   },
   {
     id: "gym-montage",
@@ -79,7 +79,7 @@ export const mockProjects: Project[] = [
     isHobby: true,
     bgFrom: "#1a0a0a",
     bgTo: "#2d1010",
-    hashtags: "HOBBY,FITNESS",
+    tags: "HOBBY,FITNESS",
   },
   {
     id: "kernel-rust",
@@ -92,7 +92,7 @@ export const mockProjects: Project[] = [
     isHobby: false,
     bgFrom: "#0a0a1a",
     bgTo: "#10102d",
-    hashtags: "OPERATING SYSTEMS,RUST",
+    tags: "OPERATING SYSTEMS,RUST",
   },
   {
     id: "esp32-overclock",
@@ -105,7 +105,7 @@ export const mockProjects: Project[] = [
     isHobby: false,
     bgFrom: "#1a0f00",
     bgTo: "#2d1a00",
-    hashtags: "EMBEDDED,HARDWARE",
+    tags: "EMBEDDED,HARDWARE",
   },
   {
     id: "llm-zero-dollars",
@@ -118,7 +118,7 @@ export const mockProjects: Project[] = [
     isHobby: false,
     bgFrom: "#0d0a1a",
     bgTo: "#1a1030",
-    hashtags: "MACHINE LEARNING,AI",
+    tags: "MACHINE LEARNING,AI",
   },
 ];
 

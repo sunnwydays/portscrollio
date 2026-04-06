@@ -82,7 +82,7 @@ interface VideoCardProps {
 export function VideoCard({ project }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const techList = project.tech.split(",").map((t) => t.trim()).filter(Boolean);
-  const hashtags = project.hashtags.split(",").map((t) => t.trim());
+  const hashtags = project.tags.split(",").map((t) => t.trim());
 
   const bgContent = (
     <>
