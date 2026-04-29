@@ -2,27 +2,28 @@ export interface Project {
   id: string;
   title: string;
   description: string;
-  videoUrl: string;
-  githubUrl: string;
-  tech: string; // comma-separated
-  isHobby: boolean;
-  bgFrom: string; // gradient placeholder
-  bgTo: string;
-  tags: string; // comma-separated display tags shown on video
+  video_url: string;
+  github_url: string;
+  tech: string;
+  is_hobby: boolean;
+  bg_from: string;
+  bg_to: string;
+  tags: string;
+  order_index: number;
 }
 
 export interface Post {
   id: string;
   slug: string;
   title: string;
-  category: string;
-  views: string;
-  timeAgo: string;
-  videoUrl: string | null;
-  tags: string; // comma-separated
-  bgFrom: string;
-  bgTo: string;
-  duration: string; // e.g. "12:45"
+  category: string | null;
+  video_url: string | null;
+  thumbnail_url: string | null;
+  tags: string;
+  bg_from: string;
+  bg_to: string;
+  duration: string | null;
+  published_at: string;
 }
 
 export interface Stat {
@@ -47,78 +48,84 @@ export const mockProjects: Project[] = [
     title: "Luminous Logic Core",
     description:
       "A high-performance orchestration layer built for micro-latency environments. Architected with safety first.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "https://github.com",
+    video_url: "https://youtube.com",
+    github_url: "https://github.com",
     tech: "Rust,React,TypeScript,Distributed Systems,gRPC",
-    isHobby: false,
-    bgFrom: "#061a1a",
-    bgTo: "#0b2d25",
+    is_hobby: false,
+    bg_from: "#061a1a",
+    bg_to: "#0b2d25",
     tags: "DISTRIBUTED SYSTEMS,RUST",
+    order_index: 1,
   },
   {
     id: "robot-arm",
     title: "6-DOF Robot Arm for my Dorm",
     description:
       "Designing and building a 6-degree-of-freedom robot arm entirely from scratch. Inverse kinematics, custom PCBs, and 3D-printed joints.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "https://github.com",
+    video_url: "https://youtube.com",
+    github_url: "https://github.com",
     tech: "Python,ROS2,C++,MG90S,BambuLab A1,SolidWorks",
-    isHobby: false,
-    bgFrom: "#0a1020",
-    bgTo: "#12203a",
+    is_hobby: false,
+    bg_from: "#0a1020",
+    bg_to: "#12203a",
     tags: "HARDWARE,ROBOTICS",
+    order_index: 2,
   },
   {
     id: "gym-montage",
     title: "A Year of Lifting",
     description:
       "From 60 kg to 100 kg power clean in 12 months. The grind, the failures, and what actually worked.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "",
+    video_url: "https://youtube.com",
+    github_url: "",
     tech: "",
-    isHobby: true,
-    bgFrom: "#1a0a0a",
-    bgTo: "#2d1010",
+    is_hobby: true,
+    bg_from: "#1a0a0a",
+    bg_to: "#2d1010",
     tags: "HOBBY,FITNESS",
+    order_index: 3,
   },
   {
     id: "kernel-rust",
     title: "Writing a Kernel in Rust",
     description:
       "Day 45 of building an OS from scratch in Rust. No libc. No safety net. Just page tables and existential dread.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "https://github.com",
+    video_url: "https://youtube.com",
+    github_url: "https://github.com",
     tech: "Rust,x86-64,RISC-V,Assembly",
-    isHobby: false,
-    bgFrom: "#0a0a1a",
-    bgTo: "#10102d",
+    is_hobby: false,
+    bg_from: "#0a0a1a",
+    bg_to: "#10102d",
     tags: "OPERATING SYSTEMS,RUST",
+    order_index: 4,
   },
   {
     id: "esp32-overclock",
     title: "Overclocking the ESP32 until it Melts",
     description:
       "How far can you push a $5 microcontroller? Further than Espressif wants you to know.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "https://github.com",
+    video_url: "https://youtube.com",
+    github_url: "https://github.com",
     tech: "C++,ESP32,FreeRTOS,Embedded Systems",
-    isHobby: false,
-    bgFrom: "#1a0f00",
-    bgTo: "#2d1a00",
+    is_hobby: false,
+    bg_from: "#1a0f00",
+    bg_to: "#2d1a00",
     tags: "EMBEDDED,HARDWARE",
+    order_index: 5,
   },
   {
     id: "llm-zero-dollars",
     title: "Training LLMs on $0",
     description:
       "A computer engineer's guide to fine-tuning language models using free GPU quotas, clever batching, and patience.",
-    videoUrl: "https://youtube.com",
-    githubUrl: "https://github.com",
+    video_url: "https://youtube.com",
+    github_url: "https://github.com",
     tech: "Python,PyTorch,Transformers,CUDA,Google Colab",
-    isHobby: false,
-    bgFrom: "#0d0a1a",
-    bgTo: "#1a1030",
+    is_hobby: false,
+    bg_from: "#0d0a1a",
+    bg_to: "#1a1030",
     tags: "MACHINE LEARNING,AI",
+    order_index: 6,
   },
 ];
 
@@ -130,78 +137,39 @@ export const mockPosts: Post[] = [
     slug: "6-dof-robot-arm-dorm",
     title: "Why I'm Building a 6-DOF Robot Arm for my Dorm",
     category: "Hardware Engineering",
-    views: "15k",
-    timeAgo: "2 days ago",
-    videoUrl: "https://youtube.com",
+    video_url: "https://youtube.com",
+    thumbnail_url: null,
     tags: "Hardware,Robotics",
-    bgFrom: "#0a1020",
-    bgTo: "#12203a",
+    bg_from: "#0a1020",
+    bg_to: "#12203a",
     duration: "12:45",
+    published_at: "2024-01-01T00:00:00Z",
   },
   {
     id: "post-2",
     slug: "kernel-rust-day-45",
     title: "Writing a Kernel in Rust: Day 45 Update",
     category: "Operating Systems",
-    views: "42k",
-    timeAgo: "1 week ago",
-    videoUrl: "https://youtube.com",
+    video_url: "https://youtube.com",
+    thumbnail_url: null,
     tags: "Rust,Low-Level",
-    bgFrom: "#0a0a1a",
-    bgTo: "#10102d",
+    bg_from: "#0a0a1a",
+    bg_to: "#10102d",
     duration: "08:12",
+    published_at: "2024-01-08T00:00:00Z",
   },
   {
     id: "post-3",
     slug: "training-llms-zero-dollars",
     title: "Training LLMs on $0: A Computer Engineer's Guide",
     category: "Machine Learning",
-    views: "108k",
-    timeAgo: "3 weeks ago",
-    videoUrl: "https://youtube.com",
+    video_url: "https://youtube.com",
+    thumbnail_url: null,
     tags: "Machine Learning,AI",
-    bgFrom: "#0d0a1a",
-    bgTo: "#1a1030",
+    bg_from: "#0d0a1a",
+    bg_to: "#1a1030",
     duration: "15:02",
-  },
-  {
-    id: "post-4",
-    slug: "esp32-overclock",
-    title: "Overclocking the ESP32 until it Melts",
-    category: "Embedded Systems",
-    views: "89k",
-    timeAgo: "1 month ago",
-    videoUrl: "https://youtube.com",
-    tags: "Hardware,Embedded",
-    bgFrom: "#1a0f00",
-    bgTo: "#2d1a00",
-    duration: "22:10",
-  },
-  {
-    id: "post-5",
-    slug: "autonomous-sorting-v2",
-    title: "Autonomous Sorting System: v2.0 Reveal",
-    category: "Automation",
-    views: "31k",
-    timeAgo: "2 months ago",
-    videoUrl: "https://youtube.com",
-    tags: "Hardware,Robotics",
-    bgFrom: "#061a0a",
-    bgTo: "#0b2d15",
-    duration: "18:33",
-  },
-  {
-    id: "post-6",
-    slug: "custom-tor-node",
-    title: "The Engineering Behind a Custom Tor Node",
-    category: "Cybersecurity",
-    views: "27k",
-    timeAgo: "3 months ago",
-    videoUrl: null,
-    tags: "Cybersecurity,Low-Level",
-    bgFrom: "#0a0a0a",
-    bgTo: "#1a1a2d",
-    duration: "10:48",
+    published_at: "2024-01-15T00:00:00Z",
   },
 ];
 
