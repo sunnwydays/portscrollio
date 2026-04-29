@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Project } from "@/lib/mock-data";
-import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
+import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon, ClosedCaptionIcon } from "@/components/icons";
 
 function getYouTubeId(url: string): string | null {
   return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
@@ -15,11 +15,14 @@ interface ActionButtonsProps {
   techList: string[];
   labels: boolean;
   muted: boolean;
+  ccEnabled: boolean;
+  showUnmuteHint: boolean;
   onOpenTech: () => void;
   onToggleMute: () => void;
+  onToggleCc: () => void;
 }
 
-function ActionButtons({ project, techList, labels, muted, onOpenTech, onToggleMute }: ActionButtonsProps) {
+function ActionButtons({ project, techList, labels, muted, ccEnabled, showUnmuteHint, onOpenTech, onToggleMute, onToggleCc }: ActionButtonsProps) {
   return (
     <div className="flex flex-col items-center gap-7">
       {project.github_url && (
@@ -49,13 +52,32 @@ function ActionButtons({ project, techList, labels, muted, onOpenTech, onToggleM
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Stack</span>}
         </button>
       )}
-      <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
+      <button onClick={onToggleCc} aria-label={ccEnabled ? "Disable captions" : "Enable captions"}
         className="flex flex-col items-center gap-1.5 group">
-        <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
-          {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+        <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${ccEnabled ? "text-primary" : "text-outline group-hover:text-primary"}`}>
+          <ClosedCaptionIcon className="w-5 h-5" />
         </div>
-        {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
+        {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">CC</span>}
       </button>
+      <div className="relative">
+        <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
+          className="flex flex-col items-center gap-1.5 group">
+          <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
+            {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+          </div>
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
+        </button>
+        {showUnmuteHint && (
+          <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 flex items-center gap-2 pointer-events-none animate-bounce">
+            <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
+              Tap to unmute
+            </span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary flex-shrink-0">
+              <path d="M3 8h10M9 4l4 4-4 4" />
+            </svg>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -92,12 +114,15 @@ interface VideoCardProps {
   project: Project;
   muted: boolean;
   onToggleMute: () => void;
+  ccEnabled: boolean;
+  onToggleCc: () => void;
+  showUnmuteHint: boolean;
 }
 
-export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc, showUnmuteHint }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const [isInView, setIsInView] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [paused, setPaused] = useState(false);
   const [showPauseHint, setShowPauseHint] = useState(false);
   const articleRef = useRef<HTMLElement>(null);
@@ -107,6 +132,9 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const videoId = project.video_url ? getYouTubeId(project.video_url) : null;
+  const iframeKey = ccEnabled ? "cc-on" : "cc-off";
+  // videoLoaded is true only when the currently-keyed iframe has fired onLoad
+  const videoLoaded = loadedKey === iframeKey;
 
   // Observe when card enters/leaves viewport
   useEffect(() => {
@@ -116,7 +144,7 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
       ([entry]) => {
         setIsInView(entry.isIntersecting);
         if (!entry.isIntersecting) {
-          setVideoLoaded(false);
+          setLoadedKey(null);
           setPaused(false);
         }
       },
@@ -152,8 +180,9 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
     pauseHintTimer.current = setTimeout(() => setShowPauseHint(false), 700);
   };
 
+  const ccParams = ccEnabled ? "&cc_load_policy=1&cc_lang_pref=en" : "";
   const embedSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1${ccParams}`
     : null;
 
   const bgContent = (
@@ -168,6 +197,7 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
       {/* YouTube embed — fades in over gradient once loaded */}
       {embedSrc && isInView && (
         <iframe
+          key={ccEnabled ? "cc-on" : "cc-off"}
           ref={iframeRef}
           src={embedSrc}
           className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
@@ -175,7 +205,7 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
           allowFullScreen
           style={{ border: 0 }}
           title={project.title}
-          onLoad={() => setVideoLoaded(true)}
+          onLoad={() => setLoadedKey(iframeKey)}
         />
       )}
 
@@ -250,19 +280,26 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
             techList={techList}
             labels={false}
             muted={muted}
+            ccEnabled={ccEnabled}
+            showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
             onToggleMute={onToggleMute}
+            onToggleCc={onToggleCc}
           />
         </div>
 
-        {techOpen && (
-          <>
-            <div className="absolute inset-0 z-20" onClick={() => setTechOpen(false)} aria-hidden="true" />
-            <div className="absolute bottom-14 inset-x-0 z-30 bg-surface-container-low/95 backdrop-blur-[20px] rounded-t-2xl">
-              <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
-            </div>
-          </>
-        )}
+        {/* Backdrop */}
+        <div
+          className={`absolute inset-0 z-20 transition-opacity duration-300 ${techOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+          onClick={() => setTechOpen(false)}
+          aria-hidden="true"
+        />
+        {/* Slide-up tray */}
+        <div
+          className={`absolute bottom-14 inset-x-0 z-30 bg-surface-container-low/95 backdrop-blur-[20px] rounded-t-2xl transition-transform duration-300 ease-out ${techOpen ? "translate-y-0" : "translate-y-full"}`}
+        >
+          <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
+        </div>
       </div>
 
       {/* ─── Desktop: 16:9 video + side ─────────────────────────────────── */}
@@ -273,21 +310,27 @@ export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
           {bgContent}
         </div>
 
-        {/* Right side — buttons always visible, tech panel opens beside them */}
+        {/* Right side — buttons always visible, tech panel slides in beside them */}
         <div className="self-stretch flex items-end pb-16 gap-4 shrink-0">
           <ActionButtons
             project={project}
             techList={techList}
             labels={true}
             muted={muted}
+            ccEnabled={ccEnabled}
+            showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
             onToggleMute={onToggleMute}
+            onToggleCc={onToggleCc}
           />
-          {techOpen && (
-            <div className="w-64 bg-surface-container-low rounded-2xl overflow-hidden ring-1 ring-outline-variant/15">
+          {/* Slide-out panel */}
+          <div
+            className={`bg-surface-container-low rounded-2xl overflow-hidden transition-[max-width,opacity] duration-300 ease-out ${techOpen ? "max-w-64 opacity-100" : "max-w-0 opacity-0 pointer-events-none"}`}
+          >
+            <div className="w-64">
               <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
             </div>
-          )}
+          </div>
         </div>
 
       </div>
