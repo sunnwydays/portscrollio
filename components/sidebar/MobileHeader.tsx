@@ -4,7 +4,12 @@ import { useState } from "react";
 import { MenuIcon } from "@/components/icons";
 import { MobileDrawer } from "./MobileDrawer";
 
-export function MobileHeader() {
+interface MobileHeaderProps {
+  settings: Record<string, string>;
+  stats: { key: string; label: string; value: string }[];
+}
+
+export function MobileHeader({ settings, stats }: MobileHeaderProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
@@ -23,7 +28,7 @@ export function MobileHeader() {
         </button>
       </header>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} settings={settings} stats={stats} />
     </>
   );
 }

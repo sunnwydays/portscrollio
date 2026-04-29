@@ -2,14 +2,21 @@
 
 import { useEffect } from "react";
 import { CloseIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
-import { mockSettings, mockStats } from "@/lib/mock-data";
+
+interface StatRow {
+  key: string;
+  label: string;
+  value: string;
+}
 
 interface MobileDrawerProps {
   open: boolean;
   onClose: () => void;
+  settings: Record<string, string>;
+  stats: StatRow[];
 }
 
-export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
+export function MobileDrawer({ open, onClose, settings, stats }: MobileDrawerProps) {
   // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -64,7 +71,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           </div>
           <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
           <p className="text-sm text-outline mt-0.5">UofT Computer Engineering</p>
-          <p className="text-sm text-primary mt-2 font-medium">{mockSettings.status}</p>
+          <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
         </div>
 
         {/* Divider */}
@@ -80,11 +87,11 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               <GitCommitIcon className="w-4 h-4 text-secondary" />
               <span className="text-[10px] uppercase tracking-widest text-outline font-semibold">Last Commit</span>
             </div>
-            <p className="text-sm text-primary font-medium leading-snug">&ldquo;{mockSettings.latestCommit}&rdquo;</p>
+            <p className="text-sm text-primary font-medium leading-snug">&ldquo;{settings.latest_commit}&rdquo;</p>
           </div>
 
           {/* Stats */}
-          {mockStats.map((stat) => {
+          {stats.map((stat) => {
             const isProgress = stat.value.includes("%");
             const progressVal = isProgress ? parseInt(stat.value) : 0;
 
@@ -122,15 +129,21 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         <div className="px-6 py-5 border-t border-outline-variant/20">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-4">Connect</p>
           <div className="flex gap-4">
-            <a href={mockSettings.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-outline hover:text-primary transition-colors">
-              <GitHubIcon className="w-5 h-5" />
-            </a>
-            <a href={mockSettings.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-outline hover:text-primary transition-colors">
-              <LinkedInIcon className="w-5 h-5" />
-            </a>
-            <a href={mockSettings.resumeUrl} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
-              <ResumeIcon className="w-5 h-5" />
-            </a>
+            {settings.github_url && (
+              <a href={settings.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-outline hover:text-primary transition-colors">
+                <GitHubIcon className="w-5 h-5" />
+              </a>
+            )}
+            {settings.linkedin_url && (
+              <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-outline hover:text-primary transition-colors">
+                <LinkedInIcon className="w-5 h-5" />
+              </a>
+            )}
+            {settings.resume_url && (
+              <a href={settings.resume_url} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
+                <ResumeIcon className="w-5 h-5" />
+              </a>
+            )}
           </div>
         </div>
       </div>

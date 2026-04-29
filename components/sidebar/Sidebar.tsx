@@ -1,8 +1,13 @@
 import { NavLink } from "./NavLink";
 import { ForYouIcon, ExploreIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
-import { mockSettings, mockStats } from "@/lib/mock-data";
 
-export function Sidebar() {
+interface SidebarProps {
+  settings: Record<string, string>;
+  stats: { key: string; label: string; value: string }[];
+}
+
+export function Sidebar({ settings, stats }: SidebarProps) {
+
   return (
     <aside className="hidden lg:flex fixed inset-y-0 left-0 z-30 w-70 flex-col bg-surface-container-low">
       {/* Profile */}
@@ -19,7 +24,7 @@ export function Sidebar() {
         {/* Status */}
         <div className="mt-4">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-1">Current Sprint</p>
-          <p className="text-sm text-primary font-medium leading-snug">{mockSettings.status}</p>
+          <p className="text-sm text-primary font-medium leading-snug">{settings.status}</p>
         </div>
       </div>
 
@@ -34,16 +39,18 @@ export function Sidebar() {
         <p className="text-[10px] font-semibold uppercase tracking-widest text-outline px-1 mb-4">Activity Feed</p>
 
         {/* Latest commit */}
-        <div className="bg-surface-container rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <GitCommitIcon className="w-4 h-4 text-secondary shrink-0" />
-            <span className="text-[10px] uppercase tracking-widest text-outline font-semibold">Last Commit</span>
+        {settings.latest_commit && (
+          <div className="bg-surface-container rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <GitCommitIcon className="w-4 h-4 text-secondary shrink-0" />
+              <span className="text-[10px] uppercase tracking-widest text-outline font-semibold">Last Commit</span>
+            </div>
+            <p className="text-sm text-primary font-medium leading-snug">&ldquo;{settings.latest_commit}&rdquo;</p>
           </div>
-          <p className="text-sm text-primary font-medium leading-snug">&ldquo;{mockSettings.latestCommit}&rdquo;</p>
-        </div>
+        )}
 
         {/* Dynamic stats */}
-        {mockStats.map((stat) => {
+        {stats.map((stat) => {
           const isProgress = stat.value.includes("%");
           const progressVal = isProgress ? parseInt(stat.value) : 0;
 
@@ -81,15 +88,21 @@ export function Sidebar() {
       <div className="px-6 py-6 border-t border-outline-variant/20">
         <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-4">Connect</p>
         <div className="flex gap-5">
-          <a href={mockSettings.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-outline hover:text-primary transition-colors">
-            <GitHubIcon className="w-5 h-5" />
-          </a>
-          <a href={mockSettings.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-outline hover:text-primary transition-colors">
-            <LinkedInIcon className="w-5 h-5" />
-          </a>
-          <a href={mockSettings.resumeUrl} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
-            <ResumeIcon className="w-5 h-5" />
-          </a>
+          {settings.github_url && (
+            <a href={settings.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-outline hover:text-primary transition-colors">
+              <GitHubIcon className="w-5 h-5" />
+            </a>
+          )}
+          {settings.linkedin_url && (
+            <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-outline hover:text-primary transition-colors">
+              <LinkedInIcon className="w-5 h-5" />
+            </a>
+          )}
+          {settings.resume_url && (
+            <a href={settings.resume_url} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
+              <ResumeIcon className="w-5 h-5" />
+            </a>
+          )}
         </div>
       </div>
     </aside>
