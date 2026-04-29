@@ -13,7 +13,6 @@ export function VideoFeed({ projects }: VideoFeedProps) {
   const [playlist, setPlaylist] = useState(() => buildPlaylist(projects));
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
-  const [ccEnabled, setCcEnabled] = useState(false);
   const [showUnmuteHint, setShowUnmuteHint] = useState(true);
   const indexRef = useRef(0);
   const lockRef = useRef(false);
@@ -106,8 +105,6 @@ export function VideoFeed({ projects }: VideoFeedProps) {
             project={project}
             muted={muted}
             onToggleMute={handleToggleMute}
-            ccEnabled={ccEnabled}
-            onToggleCc={() => setCcEnabled((c) => !c)}
             showUnmuteHint={showUnmuteHint}
           />
         ))}

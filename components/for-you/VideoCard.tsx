@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Project } from "@/lib/mock-data";
-import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon, ClosedCaptionIcon } from "@/components/icons";
+import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
 function getYouTubeId(url: string): string | null {
   return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
@@ -15,14 +15,12 @@ interface ActionButtonsProps {
   techList: string[];
   labels: boolean;
   muted: boolean;
-  ccEnabled: boolean;
   showUnmuteHint: boolean;
   onOpenTech: () => void;
   onToggleMute: () => void;
-  onToggleCc: () => void;
 }
 
-function ActionButtons({ project, techList, labels, muted, ccEnabled, showUnmuteHint, onOpenTech, onToggleMute, onToggleCc }: ActionButtonsProps) {
+function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpenTech, onToggleMute }: ActionButtonsProps) {
   return (
     <div className="flex flex-col items-center gap-7">
       {project.github_url && (
@@ -52,13 +50,6 @@ function ActionButtons({ project, techList, labels, muted, ccEnabled, showUnmute
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Stack</span>}
         </button>
       )}
-      <button onClick={onToggleCc} aria-label={ccEnabled ? "Disable captions" : "Enable captions"}
-        className="flex flex-col items-center gap-1.5 group">
-        <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${ccEnabled ? "text-primary" : "text-outline group-hover:text-primary"}`}>
-          <ClosedCaptionIcon className="w-5 h-5" />
-        </div>
-        {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">CC</span>}
-      </button>
       <div className="relative">
         <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
           className="flex flex-col items-center gap-1.5 group">
@@ -114,12 +105,10 @@ interface VideoCardProps {
   project: Project;
   muted: boolean;
   onToggleMute: () => void;
-  ccEnabled: boolean;
-  onToggleCc: () => void;
   showUnmuteHint: boolean;
 }
 
-export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc, showUnmuteHint }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -132,9 +121,7 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const videoId = project.video_url ? getYouTubeId(project.video_url) : null;
-  const iframeKey = ccEnabled ? "cc-on" : "cc-off";
-  // videoLoaded is true only when the currently-keyed iframe has fired onLoad
-  const videoLoaded = loadedKey === iframeKey;
+  const videoLoaded = loadedKey === "loaded";
 
   // Observe when card enters/leaves viewport
   useEffect(() => {
@@ -180,9 +167,8 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
     pauseHintTimer.current = setTimeout(() => setShowPauseHint(false), 700);
   };
 
-  const ccParams = ccEnabled ? "&cc_load_policy=1&cc_lang_pref=en" : "";
   const embedSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1${ccParams}`
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
     : null;
 
   const bgContent = (
@@ -197,7 +183,6 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
       {/* YouTube embed — fades in over gradient once loaded */}
       {embedSrc && isInView && (
         <iframe
-          key={ccEnabled ? "cc-on" : "cc-off"}
           ref={iframeRef}
           src={embedSrc}
           className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
@@ -205,7 +190,7 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
           allowFullScreen
           style={{ border: 0 }}
           title={project.title}
-          onLoad={() => setLoadedKey(iframeKey)}
+          onLoad={() => setLoadedKey("loaded")}
         />
       )}
 
@@ -280,11 +265,9 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
             techList={techList}
             labels={false}
             muted={muted}
-            ccEnabled={ccEnabled}
             showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
             onToggleMute={onToggleMute}
-            onToggleCc={onToggleCc}
           />
         </div>
 
@@ -317,11 +300,9 @@ export function VideoCard({ project, muted, onToggleMute, ccEnabled, onToggleCc,
             techList={techList}
             labels={true}
             muted={muted}
-            ccEnabled={ccEnabled}
             showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
             onToggleMute={onToggleMute}
-            onToggleCc={onToggleCc}
           />
           {/* Slide-out panel */}
           <div
