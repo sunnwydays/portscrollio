@@ -1,5 +1,6 @@
 import { NavLink } from "./NavLink";
 import { ForYouIcon, ExploreIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
+import { ProfileAvatar } from "./ProfileAvatar";
 
 interface SidebarProps {
   settings: Record<string, string>;
@@ -13,9 +14,7 @@ export function Sidebar({ settings, stats }: SidebarProps) {
       {/* Profile */}
       <div className="px-6 pt-8 pb-6">
         <div className="relative w-14 h-14 mb-5">
-          <div className="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary">
-            S
-          </div>
+          <ProfileAvatar />
           <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" aria-hidden="true" />
         </div>
         <p className="font-display font-bold text-xl text-on-surface leading-tight">Sunny</p>

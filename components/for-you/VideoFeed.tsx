@@ -3,25 +3,50 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Project } from "@/lib/mock-data";
 import { VideoCard } from "./VideoCard";
+import { buildPlaylist } from "@/lib/playlist";
 
 interface VideoFeedProps {
   projects: Project[];
 }
 
 export function VideoFeed({ projects }: VideoFeedProps) {
+  const [playlist, setPlaylist] = useState(() => buildPlaylist(projects));
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
+  const [ccEnabled, setCcEnabled] = useState(false);
+  const [showUnmuteHint, setShowUnmuteHint] = useState(true);
   const indexRef = useRef(0);
   const lockRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingDir = useRef(0);
-  const count = projects.length;
+  const count = playlist.length;
+
+  // Auto-dismiss unmute hint after 4 seconds
+  useEffect(() => {
+    const t = setTimeout(() => setShowUnmuteHint(false), 4000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleToggleMute = useCallback(() => {
+    setMuted((m) => {
+      if (m) setShowUnmuteHint(false);
+      return !m;
+    });
+  }, []);
 
   const go = useCallback(
     (next: number) => {
       if (lockRef.current) return;
+      if (next >= count) {
+        setPlaylist(buildPlaylist(projects));
+        indexRef.current = 0;
+        setIndex(0);
+        lockRef.current = true;
+        setTimeout(() => { lockRef.current = false; }, 420);
+        return;
+      }
       const clamped = Math.max(0, Math.min(count - 1, next));
       if (clamped === indexRef.current) return;
       indexRef.current = clamped;
@@ -29,7 +54,7 @@ export function VideoFeed({ projects }: VideoFeedProps) {
       lockRef.current = true;
       setTimeout(() => { lockRef.current = false; }, 420);
     },
-    [count]
+    [count, projects]
   );
 
   useEffect(() => {
@@ -75,12 +100,15 @@ export function VideoFeed({ projects }: VideoFeedProps) {
           transition: "transform 350ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        {projects.map((project) => (
+        {playlist.map((project) => (
           <VideoCard
             key={project.id}
             project={project}
             muted={muted}
-            onToggleMute={() => setMuted((m) => !m)}
+            onToggleMute={handleToggleMute}
+            ccEnabled={ccEnabled}
+            onToggleCc={() => setCcEnabled((c) => !c)}
+            showUnmuteHint={showUnmuteHint}
           />
         ))}
       </div>

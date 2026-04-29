@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { CloseIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
+import { ProfileAvatar } from "./ProfileAvatar";
 
 interface StatRow {
   key: string;
@@ -64,9 +65,7 @@ export function MobileDrawer({ open, onClose, settings, stats }: MobileDrawerPro
         {/* Profile */}
         <div className="px-6 pb-6">
           <div className="relative w-14 h-14 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary">
-              S
-            </div>
+            <ProfileAvatar />
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
           </div>
           <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
