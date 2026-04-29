@@ -2,6 +2,16 @@ import Link from "next/link";
 import { Post } from "@/lib/mock-data";
 import { YouTubeIcon } from "@/components/icons";
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days < 1) return "today";
+  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+}
+
 interface PostCardProps {
   post: Post;
 }
@@ -15,7 +25,7 @@ export function PostCard({ post }: PostCardProps) {
           <div
             className="absolute inset-0 transition-transform duration-300 group-hover:scale-[1.02]"
             style={{
-              background: `linear-gradient(160deg, ${post.bgFrom} 0%, ${post.bgTo} 100%)`,
+              background: `linear-gradient(160deg, ${post.bg_from} 0%, ${post.bg_to} 100%)`,
             }}
             aria-hidden="true"
           />
@@ -26,7 +36,7 @@ export function PostCard({ post }: PostCardProps) {
             </span>
           )}
           {/* Video icon if it's a video post */}
-          {post.videoUrl && (
+          {post.video_url && (
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center">
                 <YouTubeIcon className="w-5 h-5 text-primary" />
@@ -41,7 +51,7 @@ export function PostCard({ post }: PostCardProps) {
             {post.title}
           </h3>
           <p className="mt-2 text-xs text-outline">
-            {post.category} · {post.views} views · {post.timeAgo}
+            {post.category} · {timeAgo(post.published_at)}
           </p>
         </div>
       </Link>
