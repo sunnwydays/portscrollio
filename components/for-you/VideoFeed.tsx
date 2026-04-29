@@ -1,20 +1,23 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { Project } from "@/lib/mock-data";
+import { VideoCard } from "./VideoCard";
 
 interface VideoFeedProps {
-  count: number;
-  children: React.ReactNode;
+  projects: Project[];
 }
 
-export function VideoFeed({ count, children }: VideoFeedProps) {
+export function VideoFeed({ projects }: VideoFeedProps) {
   const [index, setIndex] = useState(0);
+  const [muted, setMuted] = useState(true);
   const indexRef = useRef(0);
   const lockRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingDir = useRef(0);
+  const count = projects.length;
 
   const go = useCallback(
     (next: number) => {
@@ -24,7 +27,6 @@ export function VideoFeed({ count, children }: VideoFeedProps) {
       indexRef.current = clamped;
       setIndex(clamped);
       lockRef.current = true;
-      // unlock slightly after the transition ends (350ms)
       setTimeout(() => { lockRef.current = false; }, 420);
     },
     [count]
@@ -73,7 +75,14 @@ export function VideoFeed({ count, children }: VideoFeedProps) {
           transition: "transform 350ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        {children}
+        {projects.map((project) => (
+          <VideoCard
+            key={project.id}
+            project={project}
+            muted={muted}
+            onToggleMute={() => setMuted((m) => !m)}
+          />
+        ))}
       </div>
     </div>
   );

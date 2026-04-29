@@ -1,13 +1,14 @@
-import { mockProjects } from "@/lib/mock-data";
-import { VideoCard } from "@/components/for-you/VideoCard";
+import { supabase } from "@/lib/supabase";
 import { VideoFeed } from "@/components/for-you/VideoFeed";
+import { Project } from "@/lib/mock-data";
 
-export default function ForYouPage() {
-  return (
-    <VideoFeed count={mockProjects.length}>
-      {mockProjects.map((project) => (
-        <VideoCard key={project.id} project={project} />
-      ))}
-    </VideoFeed>
-  );
+export default async function ForYouPage() {
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .order("order_index");
+
+  const projects: Project[] = data ?? [];
+
+  return <VideoFeed projects={projects} />;
 }

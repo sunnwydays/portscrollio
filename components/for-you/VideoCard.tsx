@@ -1,23 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Project } from "@/lib/mock-data";
-import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon } from "@/components/icons";
+import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
-// ─── Sub-components (module-level to satisfy react-hooks/static-components) ──
+function getYouTubeId(url: string): string | null {
+  return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 interface ActionButtonsProps {
   project: Project;
   techList: string[];
   labels: boolean;
+  muted: boolean;
   onOpenTech: () => void;
+  onToggleMute: () => void;
 }
 
-function ActionButtons({ project, techList, labels, onOpenTech }: ActionButtonsProps) {
+function ActionButtons({ project, techList, labels, muted, onOpenTech, onToggleMute }: ActionButtonsProps) {
   return (
     <div className="flex flex-col items-center gap-7">
-      {project.githubUrl && (
-        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+      {project.github_url && (
+        <a href={project.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
           className="flex flex-col items-center gap-1.5 group">
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <GitHubIcon className="w-5 h-5" />
@@ -25,13 +31,13 @@ function ActionButtons({ project, techList, labels, onOpenTech }: ActionButtonsP
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">GitHub</span>}
         </a>
       )}
-      {project.videoUrl && (
-        <a href={project.videoUrl} target="_blank" rel="noopener noreferrer" aria-label="Watch demo"
+      {project.video_url && (
+        <a href={project.video_url} target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube"
           className="flex flex-col items-center gap-1.5 group">
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <YouTubeIcon className="w-5 h-5" />
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Demo</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Video</span>}
         </a>
       )}
       {techList.length > 0 && (
@@ -43,6 +49,13 @@ function ActionButtons({ project, techList, labels, onOpenTech }: ActionButtonsP
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Stack</span>}
         </button>
       )}
+      <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
+        className="flex flex-col items-center gap-1.5 group">
+        <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
+          {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+        </div>
+        {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
+      </button>
     </div>
   );
 }
@@ -77,38 +90,138 @@ function TechPanelContent({ techList, onClose }: TechPanelContentProps) {
 
 interface VideoCardProps {
   project: Project;
+  muted: boolean;
+  onToggleMute: () => void;
 }
 
-export function VideoCard({ project }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
-  const techList = project.tech.split(",").map((t) => t.trim()).filter(Boolean);
-  const hashtags = project.tags.split(",").map((t) => t.trim());
+  const [isInView, setIsInView] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [showPauseHint, setShowPauseHint] = useState(false);
+  const articleRef = useRef<HTMLElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const pauseHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+  const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+  const videoId = project.video_url ? getYouTubeId(project.video_url) : null;
+
+  // Observe when card enters/leaves viewport
+  useEffect(() => {
+    const el = articleRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+        if (!entry.isIntersecting) {
+          setVideoLoaded(false);
+          setPaused(false);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Sync mute state via YouTube postMessage API
+  useEffect(() => {
+    if (!videoLoaded || !iframeRef.current?.contentWindow) return;
+    iframeRef.current.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: muted ? "mute" : "unMute", args: [] }),
+      "https://www.youtube.com"
+    );
+  }, [muted, videoLoaded]);
+
+  // Sync pause state via YouTube postMessage API
+  useEffect(() => {
+    if (!videoLoaded || !iframeRef.current?.contentWindow) return;
+    iframeRef.current.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: paused ? "pauseVideo" : "playVideo", args: [] }),
+      "https://www.youtube.com"
+    );
+  }, [paused, videoLoaded]);
+
+  const togglePaused = () => {
+    if (!videoLoaded) return;
+    setPaused((p) => !p);
+    setShowPauseHint(true);
+    if (pauseHintTimer.current) clearTimeout(pauseHintTimer.current);
+    pauseHintTimer.current = setTimeout(() => setShowPauseHint(false), 700);
+  };
+
+  const embedSrc = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
+    : null;
 
   const bgContent = (
     <>
+      {/* Gradient — base layer / loading fallback */}
       <div
         className="absolute inset-0"
-        style={{ background: `linear-gradient(160deg, ${project.bgFrom} 0%, ${project.bgTo} 100%)` }}
+        style={{ background: `linear-gradient(160deg, ${project.bg_from} 0%, ${project.bg_to} 100%)` }}
         aria-hidden="true"
       />
+
+      {/* YouTube embed — fades in over gradient once loaded */}
+      {embedSrc && isInView && (
+        <iframe
+          ref={iframeRef}
+          src={embedSrc}
+          className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          style={{ border: 0 }}
+          title={project.title}
+          onLoad={() => setVideoLoaded(true)}
+        />
+      )}
+
+      {/* Radial glow overlay */}
       <div
         className="absolute inset-0 opacity-20"
-        style={{ background: `radial-gradient(ellipse 60% 50% at 50% 50%, ${project.bgTo}, transparent)` }}
+        style={{ background: `radial-gradient(ellipse 60% 50% at 50% 50%, ${project.bg_to}, transparent)` }}
         aria-hidden="true"
       />
+
+      {/* Click-to-pause overlay — sits above video, below text/buttons */}
+      <div
+        className="absolute inset-0 z-5 cursor-pointer"
+        onClick={togglePaused}
+        aria-label={paused ? "Play" : "Pause"}
+        role="button"
+      />
+
+      {/* Pause/play hint — fades out after tap */}
+      <div
+        className={`absolute inset-0 z-6 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${showPauseHint ? "opacity-100" : "opacity-0"}`}
+        aria-hidden="true"
+      >
+        <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
+          {paused
+            ? <PlayIcon className="w-8 h-8 text-white ml-1" />
+            : <PauseIcon className="w-8 h-8 text-white" />}
+        </div>
+      </div>
+
+      {/* Bottom scrim for text legibility */}
       <div
         className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
         style={{ background: "linear-gradient(to top, #0b1326 0%, rgba(11,19,38,0.5) 55%, transparent 100%)" }}
         aria-hidden="true"
       />
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-8 z-10">
+
+      {/* Text overlay */}
+      <div className="absolute bottom-0 left-0 right-0 px-5 pb-20 lg:pb-8 z-10">
         <div className="flex flex-wrap gap-2 mb-3">
           {hashtags.map((tag) => (
             <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
               {tag}
             </span>
           ))}
-          {project.isHobby && (
+          {project.is_hobby && (
             <span className="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
               Hobby
             </span>
@@ -125,52 +238,55 @@ export function VideoCard({ project }: VideoCardProps) {
   );
 
   return (
-    <article className="h-dvh bg-surface">
+    <article ref={articleRef} className="h-dvh bg-surface">
 
       {/* ─── Mobile: full-screen ─────────────────────────────────────────── */}
       <div className="lg:hidden h-full relative overflow-hidden">
         {bgContent}
 
-        <div className="absolute right-4 bottom-28 z-10">
+        <div className="absolute right-4 bottom-28 z-20">
           <ActionButtons
             project={project}
             techList={techList}
             labels={false}
+            muted={muted}
             onOpenTech={() => setTechOpen(true)}
+            onToggleMute={onToggleMute}
           />
         </div>
 
         {techOpen && (
           <>
             <div className="absolute inset-0 z-20" onClick={() => setTechOpen(false)} aria-hidden="true" />
-            <div className="absolute bottom-0 inset-x-0 z-30 bg-surface-container-low/95 backdrop-blur-[20px] rounded-t-2xl">
+            <div className="absolute bottom-14 inset-x-0 z-30 bg-surface-container-low/95 backdrop-blur-[20px] rounded-t-2xl">
               <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
             </div>
           </>
         )}
       </div>
 
-      {/* ─── Desktop: phone frame + side ─────────────────────────────────── */}
+      {/* ─── Desktop: 16:9 video + side ─────────────────────────────────── */}
       <div className="hidden lg:flex h-full items-center justify-center gap-8">
 
-        {/* Phone frame */}
-        <div className="relative h-[90dvh] w-[min(400px,40vw)] rounded-[2.5rem] overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+        {/* 9:16 video frame — matches vertical short format */}
+        <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
           {bgContent}
         </div>
 
-        {/* Right side */}
-        <div className="h-[90dvh] flex items-end pb-16 shrink-0">
-          {techOpen ? (
+        {/* Right side — buttons always visible, tech panel opens beside them */}
+        <div className="self-stretch flex items-end pb-16 gap-4 shrink-0">
+          <ActionButtons
+            project={project}
+            techList={techList}
+            labels={true}
+            muted={muted}
+            onOpenTech={() => setTechOpen(true)}
+            onToggleMute={onToggleMute}
+          />
+          {techOpen && (
             <div className="w-64 bg-surface-container-low rounded-2xl overflow-hidden ring-1 ring-outline-variant/15">
               <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
             </div>
-          ) : (
-            <ActionButtons
-              project={project}
-              techList={techList}
-              labels={true}
-              onOpenTech={() => setTechOpen(true)}
-            />
           )}
         </div>
 
