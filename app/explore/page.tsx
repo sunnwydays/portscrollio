@@ -23,7 +23,7 @@ export default async function ExplorePage() {
       {/* Header */}
       <div className="px-6 lg:px-10 pt-10 pb-8">
         <p className="text-[10px] font-semibold uppercase tracking-widest text-secondary mb-3">
-          Engineering Feed
+          Understand me
         </p>
         <h1 className="font-display font-bold text-on-surface leading-none tracking-tight">
           <span className="text-4xl lg:text-5xl">Sunny&apos;s&nbsp;</span>
