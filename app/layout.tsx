@@ -6,6 +6,7 @@ import { MobileHeader } from "@/components/sidebar/MobileHeader";
 import { MobileNav } from "@/components/sidebar/MobileNav";
 import { supabase } from "@/lib/supabase";
 import { getLatestCommit } from "@/lib/github";
+import { getAvatarCategories } from "@/lib/avatars";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -39,11 +40,13 @@ export default async function RootLayout({
   const latestCommit = username ? await getLatestCommit(username) : null;
   if (latestCommit) settings.latest_commit = latestCommit;
 
+  const avatarCategories = getAvatarCategories();
+
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="bg-surface text-on-surface font-body">
-        <Sidebar settings={settings} stats={stats} />
-        <MobileHeader settings={settings} stats={stats} />
+        <Sidebar settings={settings} stats={stats} avatarCategories={avatarCategories} />
+        <MobileHeader settings={settings} stats={stats} avatarCategories={avatarCategories} />
         <main className="lg:ml-70">{children}</main>
         <MobileNav />
       </body>

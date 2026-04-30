@@ -15,9 +15,10 @@ interface MobileDrawerProps {
   onClose: () => void;
   settings: Record<string, string>;
   stats: StatRow[];
+  avatarCategories: string[][];
 }
 
-export function MobileDrawer({ open, onClose, settings, stats }: MobileDrawerProps) {
+export function MobileDrawer({ open, onClose, settings, stats, avatarCategories }: MobileDrawerProps) {
   // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -65,7 +66,7 @@ export function MobileDrawer({ open, onClose, settings, stats }: MobileDrawerPro
         {/* Profile */}
         <div className="px-6 pb-6">
           <div className="relative w-14 h-14 mb-4">
-            <ProfileAvatar />
+            <ProfileAvatar categories={avatarCategories} />
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
           </div>
           <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
