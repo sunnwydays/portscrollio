@@ -201,9 +201,9 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         aria-hidden="true"
       />
 
-      {/* Click-to-pause overlay — sits above video, below text/buttons */}
+      {/* Click-to-pause overlay — desktop only; mobile YouTube iframe can't freeze frames */}
       <div
-        className="absolute inset-0 z-5 cursor-pointer"
+        className="hidden lg:block absolute inset-0 z-15 cursor-pointer"
         onClick={togglePaused}
         aria-label={paused ? "Play" : "Pause"}
         role="button"
@@ -211,7 +211,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
 
       {/* Pause/play hint — fades out after tap */}
       <div
-        className={`absolute inset-0 z-6 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${showPauseHint ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 z-16 hidden lg:flex items-center justify-center pointer-events-none transition-opacity duration-500 ${showPauseHint ? "opacity-100" : "opacity-0"}`}
         aria-hidden="true"
       >
         <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
