@@ -1,5 +1,51 @@
 @AGENTS.md
 
+# Project Map
+
+Quick reference for navigating the codebase. Read this before exploring blindly.
+
+## Routes & Pages
+
+| Route | File | What it does |
+|-------|------|-------------|
+| `/` | `app/page.tsx` | For You — fetches `projects` from Supabase, passes to `VideoFeed` |
+| `/explore` | `app/explore/page.tsx` | Grid of posts from Supabase; tag filter UI exists but is not wired |
+| `/explore/[slug]` | `app/explore/[slug]/page.tsx` | Renders `/content/{slug}.md` via remark; falls back to YouTube embed |
+
+No `/blog/` route. Post detail is at `/explore/[slug]`.
+
+## Key Components
+
+```
+components/sidebar/     — Sidebar, MobileHeader, MobileDrawer, MobileNav, NavLink, ProfileAvatar
+components/for-you/     — VideoFeed (scroll state), VideoCard (player + actions), VideoActions (dead code, unused)
+components/explore/     — PostCard (grid card with YouTube auto-thumbnail)
+components/icons.tsx    — All SVG icons
+```
+
+## Lib Files
+
+```
+lib/supabase.ts    — supabase (public client), supabaseAdmin (bypasses RLS, Server Components only)
+lib/github.ts      — getLatestCommit(username), 300s revalidation
+lib/mock-data.ts   — authoritative TypeScript interfaces (Project, Post, Stat, Settings)
+lib/playlist.ts    — buildPlaylist(): shuffles projects, interleaves hobbies every 2–3 slots
+```
+
+## Content & Data
+
+- **Video/post metadata** → Supabase tables: `projects`, `posts`, `stats`, `settings`
+- **Blog post content** → `/content/{slug}.md` files (not stored in DB)
+- **Profile avatars** → `public/avatars/{1,2,3}/` with weights 75%/20%/5%
+
+## Pending Work
+
+- `/resume` page: embed PDF from Supabase Storage (currently points to Overleaf)
+- Explore tag filtering: UI renders but onClick logic is missing
+- `components/for-you/VideoActions.tsx`: dead code, safe to delete
+
+---
+
 # Claude-Specific Instructions
 
 ## Before Writing Code
