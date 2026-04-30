@@ -15,10 +15,14 @@ export function buildPlaylist(projects: Project[]): Project[] {
 
   if (primary.length === 0) return hobby;
 
+  const total = projects.length;
+  const fixedGap = total < 4 ? 1 : total < 7 ? 2 : 0;
+  const nextGap = () => fixedGap || 2 + Math.floor(Math.random() * 2);
+
   const result: Project[] = [];
   let hobbyIdx = 0;
   let gapCounter = 0;
-  let nextHobbyAfter = 2 + Math.floor(Math.random() * 2); // 2 or 3
+  let nextHobbyAfter = nextGap();
 
   for (const p of primary) {
     result.push(p);
@@ -26,7 +30,7 @@ export function buildPlaylist(projects: Project[]): Project[] {
     if (hobbyIdx < hobby.length && gapCounter >= nextHobbyAfter) {
       result.push(hobby[hobbyIdx++]);
       gapCounter = 0;
-      nextHobbyAfter = 2 + Math.floor(Math.random() * 2);
+      nextHobbyAfter = nextGap();
     }
   }
 
