@@ -18,8 +18,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sunny — Portfolio",
-  description: "UofT Computer Engineering. Builder of robots, kernels, and things that shouldn't work.",
+  title: "SUNNY'S PORTSCROLLIO",
+  description: "UofT Computer Engineering. Learning, optimizing, and building things for a change.",
 };
 
 export default async function RootLayout({
