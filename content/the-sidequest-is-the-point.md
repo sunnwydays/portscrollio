@@ -1,5 +1,3 @@
-# The Sidequest is the Point
-
 *April 15, 2026*
 
 You're lame if you don't do anything outside school or work. Not only lame, but stunting your own value. Sidequests are more main than your main quest.
