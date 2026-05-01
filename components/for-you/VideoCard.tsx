@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Project } from "@/lib/mock-data";
 import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
@@ -114,6 +114,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [paused, setPaused] = useState(false);
   const [showPauseHint, setShowPauseHint] = useState(false);
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
   const articleRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const pauseHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -122,6 +123,16 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const videoId = project.video_url ? getYouTubeId(project.video_url) : null;
   const videoLoaded = loadedKey === "loaded";
+  const currentTimeRef = useRef<number>(0);
+  const [embedConfig, setEmbedConfig] = useState<{ mute: 0 | 1; start: number }>(() => ({ mute: muted ? 1 : 0, start: 0 }));
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   // Observe when card enters/leaves viewport
   useEffect(() => {
@@ -141,7 +152,29 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
     return () => observer.disconnect();
   }, []);
 
-  // Sync mute state via YouTube postMessage API
+  // Subscribe to YouTube infoDelivery events to track current time for AV resync on unmute
+  useEffect(() => {
+    if (!videoLoaded || !iframeRef.current?.contentWindow) return;
+    iframeRef.current.contentWindow.postMessage(
+      JSON.stringify({ event: "listening" }),
+      "https://www.youtube.com"
+    );
+    const handleMessage = (e: MessageEvent) => {
+      if (e.origin !== "https://www.youtube.com") return;
+      try {
+        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+        if (data?.event === "infoDelivery" && typeof data?.info?.currentTime === "number") {
+          currentTimeRef.current = data.info.currentTime;
+        }
+      } catch {
+        // ignore malformed messages
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [videoLoaded]);
+
+  // Sync mute state via postMessage. Reload-with-mute=0 case is handled in handleUnmute below.
   useEffect(() => {
     if (!videoLoaded || !iframeRef.current?.contentWindow) return;
     iframeRef.current.contentWindow.postMessage(
@@ -149,6 +182,17 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
       "https://www.youtube.com"
     );
   }, [muted, videoLoaded]);
+
+  // First unmute on a card that was mounted muted: reload iframe with mute=0&start={t} so audio
+  // and video boot together. postMessage unMute alone leaves audio trailing on mobile because the
+  // audio decoder spins up cold. Subsequent toggles use the postMessage effect above (decoder warm).
+  const handleUnmute = useCallback(() => {
+    if (muted && embedConfig.mute === 1) {
+      setLoadedKey(null);
+      setEmbedConfig({ mute: 0, start: Math.floor(currentTimeRef.current) });
+    }
+    onToggleMute();
+  }, [muted, embedConfig.mute, onToggleMute]);
 
   // Sync pause state via YouTube postMessage API
   useEffect(() => {
@@ -168,7 +212,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
   };
 
   const embedSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${embedConfig.mute}&loop=1&playlist=${videoId}${embedConfig.start > 0 ? `&start=${embedConfig.start}` : ""}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
     : null;
 
   const bgContent = (
@@ -179,20 +223,6 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         style={{ background: `linear-gradient(160deg, ${project.bg_from} 0%, ${project.bg_to} 100%)` }}
         aria-hidden="true"
       />
-
-      {/* YouTube embed — fades in over gradient once loaded */}
-      {embedSrc && isInView && (
-        <iframe
-          ref={iframeRef}
-          src={embedSrc}
-          className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-          style={{ border: 0 }}
-          title={project.title}
-          onLoad={() => setLoadedKey("loaded")}
-        />
-      )}
 
       {/* Radial glow overlay */}
       <div
@@ -257,6 +287,18 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
 
       {/* ─── Mobile: full-screen ─────────────────────────────────────────── */}
       <div className="lg:hidden h-full relative overflow-hidden">
+        {isDesktop === false && embedSrc && isInView && (
+          <iframe
+            ref={iframeRef}
+            src={embedSrc}
+            className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            style={{ border: 0 }}
+            title={project.title}
+            onLoad={() => setLoadedKey("loaded")}
+          />
+        )}
         {bgContent}
 
         <div className="absolute right-4 bottom-28 z-20">
@@ -267,7 +309,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
             muted={muted}
             showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
-            onToggleMute={onToggleMute}
+            onToggleMute={handleUnmute}
           />
         </div>
 
@@ -290,6 +332,18 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
 
         {/* 9:16 video frame — matches vertical short format */}
         <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+          {isDesktop === true && embedSrc && isInView && (
+            <iframe
+              ref={iframeRef}
+              src={embedSrc}
+              className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              style={{ border: 0 }}
+              title={project.title}
+              onLoad={() => setLoadedKey("loaded")}
+            />
+          )}
           {bgContent}
         </div>
 
@@ -302,7 +356,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
             muted={muted}
             showUnmuteHint={showUnmuteHint && isInView}
             onOpenTech={() => setTechOpen(true)}
-            onToggleMute={onToggleMute}
+            onToggleMute={handleUnmute}
           />
           {/* Slide-out panel */}
           <div
