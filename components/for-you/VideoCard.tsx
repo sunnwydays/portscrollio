@@ -229,7 +229,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
       />
 
       {/* Text overlay */}
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-20 lg:pb-8 z-10">
+      <div className="absolute bottom-0 left-0 right-0 pl-5 pr-20 lg:px-5 pb-20 lg:pb-8 z-10">
         <div className="flex flex-wrap gap-2 mb-3">
           {hashtags.map((tag) => (
             <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
@@ -294,7 +294,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         </div>
 
         {/* Right side — buttons always visible, tech panel slides in beside them */}
-        <div className="self-stretch flex items-end pb-16 gap-4 shrink-0">
+        <div className="self-stretch flex items-end pb-24 gap-4 shrink-0">
           <ActionButtons
             project={project}
             techList={techList}
