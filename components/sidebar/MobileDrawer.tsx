@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { CloseIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
 import { ProfileAvatar } from "./ProfileAvatar";
@@ -140,9 +141,9 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
               </a>
             )}
             {settings.resume_url && (
-              <a href={settings.resume_url} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
+              <Link href="/resume" aria-label="Resume" onClick={onClose} className="text-outline hover:text-primary transition-colors">
                 <ResumeIcon className="w-5 h-5" />
-              </a>
+              </Link>
             )}
           </div>
         </div>

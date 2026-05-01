@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NavLink } from "./NavLink";
 import { ForYouIcon, ExploreIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
 import { ProfileAvatar } from "./ProfileAvatar";
@@ -99,9 +100,9 @@ export function Sidebar({ settings, stats, avatarCategories }: SidebarProps) {
             </a>
           )}
           {settings.resume_url && (
-            <a href={settings.resume_url} target="_blank" rel="noopener noreferrer" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
+            <Link href="/resume" aria-label="Resume" className="text-outline hover:text-primary transition-colors">
               <ResumeIcon className="w-5 h-5" />
-            </a>
+            </Link>
           )}
         </div>
       </div>
