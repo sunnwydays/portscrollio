@@ -4,6 +4,7 @@ import path from "path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
 
@@ -37,10 +38,6 @@ export default async function PostPage({ params }: PageProps) {
   const post = data as Post;
   const html = await getMarkdown(slug);
 
-  const gradientStyle = {
-    background: `linear-gradient(160deg, ${post.bg_from} 0%, ${post.bg_to} 100%)`,
-  };
-
   if (!html && post.video_url) {
     const videoId = post.video_url.match(
       /(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/
@@ -48,7 +45,24 @@ export default async function PostPage({ params }: PageProps) {
 
     return (
       <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0">
-        <div className="relative h-64 lg:h-80 w-full overflow-hidden" style={gradientStyle} />
+        <div className="relative h-64 lg:h-80 w-full overflow-hidden">
+          {post.thumbnail_url && (
+            <Image src={post.thumbnail_url} alt="" fill className="object-cover" priority />
+          )}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(160deg, ${post.bg_from} 0%, ${post.bg_to} 100%)`,
+              opacity: post.thumbnail_url ? 0.55 : 1,
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 h-2/3"
+            style={{ background: "linear-gradient(to top, #0b1326 0%, transparent 100%)" }}
+            aria-hidden="true"
+          />
+        </div>
         <div className="max-w-5xl mx-auto px-6 py-10">
           <p className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3">
             {post.category}
@@ -75,7 +89,18 @@ export default async function PostPage({ params }: PageProps) {
   return (
     <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0">
       {/* Hero */}
-      <div className="relative h-48 lg:h-64 w-full overflow-hidden" style={gradientStyle}>
+      <div className="relative h-48 lg:h-64 w-full overflow-hidden">
+        {post.thumbnail_url && (
+          <Image src={post.thumbnail_url} alt="" fill className="object-cover" priority />
+        )}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(160deg, ${post.bg_from} 0%, ${post.bg_to} 100%)`,
+            opacity: post.thumbnail_url ? 0.55 : 1,
+          }}
+          aria-hidden="true"
+        />
         <div
           className="absolute inset-x-0 bottom-0 h-2/3"
           style={{ background: "linear-gradient(to top, #0b1326 0%, transparent 100%)" }}
