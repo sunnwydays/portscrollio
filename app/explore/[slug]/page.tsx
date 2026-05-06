@@ -44,26 +44,8 @@ export default async function PostPage({ params }: PageProps) {
     )?.[1];
 
     return (
-      <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0">
-        <div className="relative h-64 lg:h-80 w-full overflow-hidden">
-          {post.thumbnail_url && (
-            <Image src={post.thumbnail_url} alt="" fill className="object-cover" priority />
-          )}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(160deg, ${post.bg_from} 0%, ${post.bg_to} 100%)`,
-              opacity: post.thumbnail_url ? 0.55 : 1,
-            }}
-            aria-hidden="true"
-          />
-          <div
-            className="absolute inset-x-0 bottom-0 h-2/3"
-            style={{ background: "linear-gradient(to top, #0b1326 0%, transparent 100%)" }}
-            aria-hidden="true"
-          />
-        </div>
-        <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0 flex items-center justify-center">
+        <div className="max-w-5xl mx-auto px-6 w-full">
           <p className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3">
             {post.category}
           </p>
