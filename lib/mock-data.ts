@@ -14,7 +14,7 @@ export interface Project {
 
 export interface Post {
   id: string;
-  slug: string;
+  slug?: string;
   title: string;
   category: string | null;
   video_url: string | null;

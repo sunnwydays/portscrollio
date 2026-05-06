@@ -29,7 +29,7 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <article className="group flex flex-col bg-surface-container-low rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 hover:bg-surface-container-high">
-      <Link href={`/explore/${post.slug}`} className="block">
+      <Link href={`/explore/${post.slug ?? ''}`} className="block">
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden">
           {/* Gradient — base layer / shown when no thumbnail */}
