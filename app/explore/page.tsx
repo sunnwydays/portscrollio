@@ -30,7 +30,7 @@ export default async function ExplorePage() {
           <span className="text-4xl lg:text-5xl text-primary">Thoughts</span>
         </h1>
         <p className="mt-3 text-sm text-outline max-w-md leading-relaxed">
-          I&apos;ve been thinking the things there are to think about life. Take a read to find a new perspective.
+          I&apos;ve been thinking the things there are to think about life. Take a look to find a new perspective.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-2">
