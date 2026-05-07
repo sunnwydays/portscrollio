@@ -26,9 +26,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [{ data: statsRows }, { data: settingsRows }] = await Promise.all([
+  const [{ data: statsRows }, { data: settingsRows }, { data: postsRows }] = await Promise.all([
     supabase.from("stats").select("*").order("display_order"),
     supabase.from("settings").select("key, value"),
+    supabase.from("posts").select("id, slug"),
   ]);
 
   const stats = statsRows ?? [];
@@ -41,12 +42,15 @@ export default async function RootLayout({
   if (latestCommit) settings.latest_commit = latestCommit;
 
   const avatarCategories = getAvatarCategories();
+  const postSlugs = (postsRows ?? []).map(
+    (p: { id: string; slug?: string | null }) => p.slug ?? p.id
+  ).filter(Boolean) as string[];
 
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="bg-surface text-on-surface font-body">
-        <Sidebar settings={settings} stats={stats} avatarCategories={avatarCategories} />
-        <MobileHeader settings={settings} stats={stats} avatarCategories={avatarCategories} />
+        <Sidebar settings={settings} stats={stats} avatarCategories={avatarCategories} postSlugs={postSlugs} />
+        <MobileHeader settings={settings} stats={stats} avatarCategories={avatarCategories} postSlugs={postSlugs} />
         <main className="lg:ml-70">{children}</main>
         <MobileNav />
       </body>
