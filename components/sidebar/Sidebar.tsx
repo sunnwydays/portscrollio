@@ -7,16 +7,17 @@ interface SidebarProps {
   settings: Record<string, string>;
   stats: { key: string; label: string; value: string }[];
   avatarCategories: string[][];
+  postSlugs: string[];
 }
 
-export function Sidebar({ settings, stats, avatarCategories }: SidebarProps) {
+export function Sidebar({ settings, stats, avatarCategories, postSlugs }: SidebarProps) {
 
   return (
     <aside className="hidden lg:flex fixed inset-y-0 left-0 z-30 w-70 flex-col bg-surface-container-low">
       {/* Profile */}
       <div className="px-6 pt-8 pb-6">
         <div className="relative w-14 h-14 mb-5">
-          <ProfileAvatar categories={avatarCategories} />
+          <ProfileAvatar categories={avatarCategories} postSlugs={postSlugs} />
           <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" aria-hidden="true" />
         </div>
         <p className="font-display font-bold text-xl text-on-surface leading-tight">Sunny</p>
