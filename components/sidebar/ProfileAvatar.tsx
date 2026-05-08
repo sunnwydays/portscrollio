@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const WEIGHTS = [0.75, 0.20, 0.05];
@@ -32,9 +33,11 @@ function getOrPickSrc(categories: string[][]): string | null {
 interface ProfileAvatarProps {
   categories: string[][];
   className?: string;
+  postSlugs?: string[];
 }
 
-export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl" }: ProfileAvatarProps) {
+export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl", postSlugs }: ProfileAvatarProps) {
+  const router = useRouter();
   // useSyncExternalStore: server snapshot = null (avoids hydration mismatch),
   // client snapshot = sessionStorage value or a freshly picked image.
   const src = useSyncExternalStore(
@@ -45,8 +48,20 @@ export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl" 
   const [pickedError, setPickedError] = useState(false);
   const [defaultError, setDefaultError] = useState(false);
 
-  if (src && !pickedError) {
-    return (
+  function handleClick() {
+    if (!postSlugs || postSlugs.length === 0) return;
+    console.log("you found an easter egg!");
+    const slug = postSlugs[Math.floor(Math.random() * postSlugs.length)];
+    router.push(`/explore/${slug}`);
+  }
+
+  const clickable = postSlugs && postSlugs.length > 0;
+  const wrapperProps = clickable
+    ? { onClick: handleClick, role: "button" as const, tabIndex: 0, className: "cursor-pointer" }
+    : {};
+
+  const image =
+    src && !pickedError ? (
       <Image
         src={src}
         alt="Profile photo"
@@ -56,11 +71,7 @@ export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl" 
         onError={() => setPickedError(true)}
         priority
       />
-    );
-  }
-
-  if (!defaultError) {
-    return (
+    ) : !defaultError ? (
       <Image
         src={DEFAULT_SRC}
         alt="Profile photo"
@@ -70,12 +81,11 @@ export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl" 
         onError={() => setDefaultError(true)}
         priority
       />
+    ) : (
+      <div className={`${className} bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary`}>
+        S
+      </div>
     );
-  }
 
-  return (
-    <div className={`${className} bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary`}>
-      S
-    </div>
-  );
+  return <div {...wrapperProps}>{image}</div>;
 }
