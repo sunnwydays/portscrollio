@@ -17,7 +17,7 @@ async function getMarkdown(slug: string): Promise<string | null> {
     const filePath = path.join(process.cwd(), "content", `${slug}.md`);
     const raw = await fs.readFile(filePath, "utf-8");
     const { content } = matter(raw);
-    const result = await remark().use(remarkHtml).process(content);
+    const result = await remark().use(remarkHtml, { sanitize: false }).process(content);
     return result.toString();
   } catch {
     return null;
@@ -117,7 +117,8 @@ export default async function PostPage({ params }: PageProps) {
             prose-strong:text-on-surface
             prose-code:text-secondary prose-code:bg-surface-container prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
             prose-pre:bg-surface-container-low prose-pre:rounded-xl
-            prose-blockquote:border-primary prose-blockquote:text-outline"
+            prose-blockquote:border-primary prose-blockquote:text-outline
+            prose-img:max-h-80 prose-img:w-auto prose-img:mx-auto prose-img:rounded-xl"
           dangerouslySetInnerHTML={{ __html: html ?? "" }}
         />
       </div>

@@ -4,7 +4,7 @@ It's not that there are many fun things, and gambling is one of them. Gambling
 *IS* fun. Those words are *synonymous*. Uncertainty means enjoyment, and the 
 lack of uncertainty means no enjoyment :( .
 
-![the fun vs the spoilers in movies, sports/games, talking, and life](/blog/gambling-is-fun/fun_spoilers.png)
+<img src="/blog/gambling-is-fun/fun_spoilers.png" alt="flow chart of stressing vs no stressing result is living" style="max-height: 700px; width: auto; display: block; margin: 0 auto; border-radius: 12px;" />
 
 The Netherlands has a reputation for being boring. They have high taxes to 
 maximize average quality of life and transportation is well-designed. In a 
