@@ -45,6 +45,8 @@ Get up and do something. Starting is the hardest part, which is why I refuse to 
 
 You must have a small ("arbitrary", "fun", "side") goal you work toward because the big picture doesn't matter anyway. Lives get tough, we evolve but not fast enough, the world keeps spinning.
 
+---
+
 ## Appendix
 
 ### How to Start Juggling
