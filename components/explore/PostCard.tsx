@@ -19,9 +19,10 @@ function getYouTubeId(url: string): string | null {
 
 interface PostCardProps {
   post: Post;
+  aspectRatio?: 'aspect-video' | 'aspect-[4/3]' | 'aspect-[5/4]';
 }
 
-export function PostCard({ post }: PostCardProps) {
+export function PostCard({ post, aspectRatio = 'aspect-video' }: PostCardProps) {
   const videoId = post.video_url ? getYouTubeId(post.video_url) : null;
   // Use explicit thumbnail > YouTube auto-thumb > gradient fallback
   const thumbSrc = post.thumbnail_url
@@ -31,7 +32,7 @@ export function PostCard({ post }: PostCardProps) {
     <article className="group flex flex-col bg-surface-container-low rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 hover:bg-surface-container-high">
       <Link href={`/explore/${post.slug ?? ''}`} className="block">
         {/* Thumbnail */}
-        <div className="relative aspect-video overflow-hidden">
+        <div className={`relative ${aspectRatio} overflow-hidden`}>
           {/* Gradient — base layer / shown when no thumbnail */}
           <div
             className="absolute inset-0"

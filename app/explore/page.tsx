@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import { PostCard } from "@/components/explore/PostCard";
 import { Post } from "@/lib/mock-data";
 
+const ASPECTS = ['aspect-video', 'aspect-[4/3]', 'aspect-[5/4]'] as const;
+
 function getUniqueTags(posts: Post[]): string[] {
   const all = posts.flatMap((p) =>
     p.tags.split(",").map((t) => t.trim()).filter(Boolean)
@@ -54,9 +56,11 @@ export default async function ExplorePage() {
         {posts.length === 0 ? (
           <p className="text-outline text-sm">No posts yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
+            {posts.map((post, i) => (
+              <div key={post.id} className="break-inside-avoid mb-6">
+                <PostCard post={post} aspectRatio={ASPECTS[i % ASPECTS.length]} />
+              </div>
             ))}
           </div>
         )}
