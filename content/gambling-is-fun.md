@@ -26,9 +26,7 @@ after-work schedules (more notes in appendix):
        9:00 bedtime routine
 ```
 
-![first half of the schedule on index card](/blog/gambling-is-fun/index_card_1.jpg)
-
-![second half of the schedule on index card](/blog/gambling-is-fun/index_card_2.jpg)
+![schedule on index card](/blog/gambling-is-fun/index_card_schedule.png)
 
 I have these index cards where I had my todo tasks, and I was crossing out those
 that I put on the schedule. That's even though I had not finished them yet - but
