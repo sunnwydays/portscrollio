@@ -8,7 +8,7 @@ function getUniqueTags(posts: Post[]): string[] {
   const all = posts.flatMap((p) =>
     p.tags.split(",").map((t) => t.trim()).filter(Boolean)
   );
-  return ["All Projects", ...Array.from(new Set(all))];
+  return ["All Posts", ...Array.from(new Set(all))];
 }
 
 export default async function ExplorePage() {
