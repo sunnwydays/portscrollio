@@ -60,8 +60,8 @@ Sleep is free and needs no effort once you're out cold.
 
 ## Build sleep
 
-Skipping/delaying sleep by a couple minutes or hours doesn't provide any instant 
-feedback, which makes it challenging to change.
+Skipping/delaying sleep by a couple minutes or hours **doesn't provide instant 
+feedback**, which makes it challenging to change.
 
 Getting a dimmable lamp and dimmable washroom lights, on the other hand, is a 
 quick fix that has a clear impact. Control over lights in the morning and 
@@ -84,7 +84,7 @@ well for a bit and you will unlock a fresher mind that can find a way. That
 evening hour is better spent sleeping than studying.
 
 It's routine to blame simple mistakes on lacking practice or just "brain lapses", 
-but you have to pinpoint something you have the power to change. You forget
+but you have to **pinpoint something you have the power to change**. You forget
 a formula on your test and you can't focus. You keep dropping the discs in your 
 ultimate frisbee game and make bad decisions.
 
