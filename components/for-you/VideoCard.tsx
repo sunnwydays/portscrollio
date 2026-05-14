@@ -284,7 +284,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
       {/* Text overlay */}
       <div
         className="absolute bottom-0 left-0 right-0 pl-5 pr-20 lg:px-5 pt-6 pb-20 lg:pb-8 z-10"
-        style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 100%)" }}
+        style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.67) 100%)" }}
       >
         <div className="flex flex-wrap gap-2 mb-3">
           {hashtags.map((tag) => (
