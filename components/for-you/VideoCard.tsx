@@ -14,6 +14,8 @@ const TECH_ICONS: Record<string, string> = {
   "PostgreSQL":     "/icons/tech/postgresql.svg",
   "Python":         "/icons/tech/python.png",
   "Node.js":        "/icons/tech/nodejs.png",
+  "Tailwind CSS":   "/icons/tech/tailwindcss.png",
+  "Firebase":       "/icons/tech/firebase.png",
   "Docker":         "/icons/tech/docker.webp",
   "C":              "/icons/tech/c.png",
   "C++":            "/icons/tech/cpp.png",
