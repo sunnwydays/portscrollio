@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { MobileHeader } from "@/components/sidebar/MobileHeader";
 import { MobileNav } from "@/components/sidebar/MobileNav";
@@ -53,6 +54,7 @@ export default async function RootLayout({
         <MobileHeader settings={settings} stats={stats} avatarCategories={avatarCategories} postSlugs={postSlugs} />
         <main className="lg:ml-70">{children}</main>
         <MobileNav />
+        <Analytics />
       </body>
     </html>
   );
