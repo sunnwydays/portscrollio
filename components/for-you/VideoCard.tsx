@@ -1,8 +1,25 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Project } from "@/lib/mock-data";
 import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
+
+const TECH_ICONS: Record<string, string> = {
+  "React":          "/icons/tech/react.png",
+  "Next.js":        "/icons/tech/nextjs.svg",
+  "TypeScript":     "/icons/tech/typescript.png",
+  "JavaScript":     "/icons/tech/javascript.png",
+  "Supabase":       "/icons/tech/supabase.webp",
+  "PostgreSQL":     "/icons/tech/postgresql.svg",
+  "Python":         "/icons/tech/python.png",
+  "Node.js":        "/icons/tech/nodejs.png",
+  "Docker":         "/icons/tech/docker.webp",
+  "C":              "/icons/tech/c.png",
+  "C++":            "/icons/tech/cpp.png",
+  "BambuLab A1":    "/icons/tech/bambulab.webp",
+  "Fusion 360":     "/icons/tech/fusion360.png",
+};
 
 function getYouTubeId(url: string): string | null {
   return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
@@ -89,11 +106,15 @@ function TechPanelContent({ techList, onClose }: TechPanelContentProps) {
         </button>
       </div>
       <div className="p-6 flex flex-wrap gap-2">
-        {techList.map((t) => (
-          <span key={t} className="px-3 py-1.5 rounded-full bg-surface-container-high text-secondary text-sm font-medium">
-            {t}
-          </span>
-        ))}
+        {techList.map((t) => {
+          const icon = TECH_ICONS[t];
+          return (
+            <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-secondary text-sm font-medium">
+              {icon && <Image src={icon} alt="" aria-hidden={true} width={16} height={16} className="shrink-0" />}
+              {t}
+            </span>
+          );
+        })}
       </div>
     </>
   );
