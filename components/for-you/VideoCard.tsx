@@ -378,7 +378,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         </div>
 
         {/* Center — video + action buttons grouped so the pair is what gets centered */}
-        <div className="flex h-full items-center gap-8">
+        <div className="flex h-full items-center gap-4">
 
           {/* 9:16 video frame — matches vertical short format */}
           <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
