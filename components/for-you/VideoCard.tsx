@@ -301,9 +301,6 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         <h2 className="font-display font-bold text-lg lg:text-xl text-on-surface leading-tight tracking-tight">
           {project.title}
         </h2>
-        <p className="mt-1.5 text-xs text-on-surface leading-relaxed line-clamp-2">
-          {project.description}
-        </p>
       </div>
     </>
   );
