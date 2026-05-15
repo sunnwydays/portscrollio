@@ -72,17 +72,22 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
       <div className="relative">
         <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
           className="flex flex-col items-center gap-1.5 group">
-          <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
-            {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+          <div className="relative">
+            {showUnmuteHint && (
+              <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
+            )}
+            <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
+              {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+            </div>
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
         </button>
         {showUnmuteHint && (
-          <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 flex items-center gap-2 pointer-events-none animate-bounce">
+          <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
             <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
               Tap to unmute
             </span>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary flex-shrink-0">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 text-primary shrink-0">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
           </div>

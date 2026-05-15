@@ -22,9 +22,9 @@ export function VideoFeed({ projects }: VideoFeedProps) {
   const pendingDir = useRef(0);
   const count = playlist.length;
 
-  // Auto-dismiss unmute hint after 4 seconds
+  // Auto-dismiss unmute hint after 6 seconds
   useEffect(() => {
-    const t = setTimeout(() => setShowUnmuteHint(false), 4000);
+    const t = setTimeout(() => setShowUnmuteHint(false), 6767);
     return () => clearTimeout(t);
   }, []);
 
