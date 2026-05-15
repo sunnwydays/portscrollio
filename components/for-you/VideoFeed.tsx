@@ -40,9 +40,9 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
     (next: number) => {
       if (lockRef.current) return;
       if (next >= count) {
-        setPlaylist(buildPlaylist(projects));
-        indexRef.current = 0;
-        setIndex(0);
+        setPlaylist((prev) => [...prev, ...buildPlaylist(projects)]);
+        indexRef.current = count;
+        setIndex(count);
         lockRef.current = true;
         setTimeout(() => { lockRef.current = false; }, 420);
         return;
@@ -100,9 +100,9 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
           transition: "transform 350ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        {playlist.map((project) => (
+        {playlist.map((project, i) => (
           <VideoCard
-            key={project.id}
+            key={i}
             project={project}
             muted={muted}
             onToggleMute={handleToggleMute}
