@@ -117,7 +117,11 @@ function TechPanelContent({ techList, onClose }: TechPanelContentProps) {
           const icon = TECH_ICONS[t];
           return (
             <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-secondary text-sm font-medium">
-              {icon && <Image src={icon} alt="" aria-hidden={true} width={16} height={16} className="shrink-0" />}
+              {icon && (
+                <span className="relative w-4 h-4 shrink-0 inline-block">
+                  <Image src={icon} alt="" aria-hidden={true} fill sizes="16px" style={{ objectFit: "contain" }} />
+                </span>
+              )}
               {t}
             </span>
           );

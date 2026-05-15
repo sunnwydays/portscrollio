@@ -82,7 +82,7 @@ The full design specs and mockup PNGs live in `design/`. Each page has its own s
 5. **No white text** — Use `on_surface` (`#dae2fd`) instead of `#ffffff`.
 6. **Asymmetric layout** — Offset large display typography against centered content. Don't default to symmetric grids.
 7. **Cards** — `surface_container_low` background. On hover: transition to `surface_container_high` + scale image 1.02x. No dividers — use 3rem spacing.
-8. **Chips** (tech stacks) — `surface_container_high` background, `secondary` text, fully rounded (9999px).
+8. **Chips** (tech stacks) — `surface_container_high` background, `secondary` text, fully rounded (9999px). Icons are 16×16 PNG/SVG/WebP from `public/icons/tech/`. Non-square logos must **not** be cropped — render in a `relative w-4 h-4` container with `fill` + `objectFit: "contain"` so transparent whitespace pads the shorter dimension.
 9. **Buttons** — Primary: gradient background, `on_primary` text, 0.75rem radius. Secondary: ghost style, no background, `outline` border at 20% opacity. Hover: `primary_fixed` outer glow (0 0 15px).
 
 ### Responsive Design

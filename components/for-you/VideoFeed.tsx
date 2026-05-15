@@ -7,10 +7,11 @@ import { buildPlaylist } from "@/lib/playlist";
 
 interface VideoFeedProps {
   projects: Project[];
+  initialPlaylist: Project[];
 }
 
-export function VideoFeed({ projects }: VideoFeedProps) {
-  const [playlist, setPlaylist] = useState(() => buildPlaylist(projects));
+export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
+  const [playlist, setPlaylist] = useState(initialPlaylist);
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
   const [showUnmuteHint, setShowUnmuteHint] = useState(true);
