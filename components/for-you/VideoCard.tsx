@@ -359,7 +359,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
       <div className="hidden lg:grid h-full grid-cols-[1fr_auto_1fr] items-center">
 
         {/* Left side — title + tags, fills space from sidebar to video */}
-        <div className="flex flex-col justify-end self-stretch pb-24 px-10">
+        <div className="flex flex-col justify-end self-stretch pb-14 px-10">
           <div className="flex flex-wrap gap-2 mb-3">
             {hashtags.map((tag) => (
               <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
@@ -381,7 +381,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         <div className="flex h-full items-center gap-4">
 
           {/* 9:16 video frame — matches vertical short format */}
-          <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+          <div className="relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
             {isDesktop === true && embedSrc && isInView && (
               <iframe
                 ref={iframeRef}
@@ -398,7 +398,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
           </div>
 
           {/* Action buttons — always visible, tech panel slides in beside them */}
-          <div className="self-stretch flex items-end pb-24 gap-4 shrink-0">
+          <div className="self-stretch flex items-end pb-6 gap-4 shrink-0">
             <ActionButtons
               project={project}
               techList={techList}
