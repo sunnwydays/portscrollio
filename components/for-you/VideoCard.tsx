@@ -279,16 +279,16 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         </div>
       </div>
 
-      {/* Bottom scrim for text legibility */}
+      {/* Bottom scrim for text legibility — mobile only */}
       <div
-        className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
+        className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none lg:hidden"
         style={{ background: "linear-gradient(to top, #0b1326 0%, rgba(11,19,38,0.5) 55%, transparent 100%)" }}
         aria-hidden="true"
       />
 
-      {/* Text overlay */}
+      {/* Text overlay — mobile only; desktop shows title/tags in side panel */}
       <div
-        className="absolute bottom-0 left-0 right-0 pl-5 pr-20 lg:px-5 pt-6 pb-20 lg:pb-8 z-10"
+        className="absolute bottom-0 left-0 right-0 pl-5 pr-20 pt-6 pb-20 z-10 lg:hidden"
         style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.67) 100%)" }}
       >
         <div className="flex flex-wrap gap-2 mb-3">
@@ -356,45 +356,72 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
       </div>
 
       {/* ─── Desktop: 16:9 video + side ─────────────────────────────────── */}
-      <div className="hidden lg:flex h-full items-center justify-center gap-8">
+      <div className="hidden lg:grid h-full grid-cols-[1fr_auto_1fr] items-center">
 
-        {/* 9:16 video frame — matches vertical short format */}
-        <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
-          {isDesktop === true && embedSrc && isInView && (
-            <iframe
-              ref={iframeRef}
-              src={embedSrc}
-              className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              style={{ border: 0 }}
-              title={project.title}
-              onLoad={() => setLoadedKey("loaded")}
-            />
-          )}
-          {bgContent}
+        {/* Left side — title + tags, fills space from sidebar to video */}
+        <div className="flex flex-col justify-end self-stretch pb-24 px-10">
+          <div className="flex flex-wrap gap-2 mb-3">
+            {hashtags.map((tag) => (
+              <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
+                {tag}
+              </span>
+            ))}
+            {project.is_hobby && (
+              <span className="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
+                Hobby
+              </span>
+            )}
+          </div>
+          <h2 className="font-display font-bold text-xl text-on-surface leading-tight tracking-tight">
+            {project.title}
+          </h2>
         </div>
 
-        {/* Right side — buttons always visible, tech panel slides in beside them */}
-        <div className="self-stretch flex items-end pb-24 gap-4 shrink-0">
-          <ActionButtons
-            project={project}
-            techList={techList}
-            labels={true}
-            muted={muted}
-            showUnmuteHint={showUnmuteHint && isInView}
-            onOpenTech={() => setTechOpen((o) => !o)}
-            onToggleMute={handleUnmute}
-          />
-          {/* Slide-out panel */}
-          <div
-            className={`bg-surface-container-low rounded-2xl overflow-hidden transition-[max-width,opacity] duration-300 ease-out ${techOpen ? "max-w-64 opacity-100" : "max-w-0 opacity-0 pointer-events-none"}`}
-          >
-            <div className="w-64">
-              <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
+        {/* Center — video + action buttons grouped so the pair is what gets centered */}
+        <div className="flex h-full items-center gap-8">
+
+          {/* 9:16 video frame — matches vertical short format */}
+          <div className="relative h-[85dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+            {isDesktop === true && embedSrc && isInView && (
+              <iframe
+                ref={iframeRef}
+                src={embedSrc}
+                className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                style={{ border: 0 }}
+                title={project.title}
+                onLoad={() => setLoadedKey("loaded")}
+              />
+            )}
+            {bgContent}
+          </div>
+
+          {/* Action buttons — always visible, tech panel slides in beside them */}
+          <div className="self-stretch flex items-end pb-24 gap-4 shrink-0">
+            <ActionButtons
+              project={project}
+              techList={techList}
+              labels={true}
+              muted={muted}
+              showUnmuteHint={showUnmuteHint && isInView}
+              onOpenTech={() => setTechOpen((o) => !o)}
+              onToggleMute={handleUnmute}
+            />
+            {/* Slide-out panel */}
+            <div
+              className={`bg-surface-container-low rounded-2xl overflow-hidden transition-[max-width,opacity] duration-300 ease-out ${techOpen ? "max-w-64 opacity-100" : "max-w-0 opacity-0 pointer-events-none"}`}
+            >
+              <div className="w-64">
+                <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
+              </div>
             </div>
           </div>
+
         </div>
+
+        {/* Empty right column — balances the left so the center group is truly centered */}
+        <div aria-hidden="true" />
 
       </div>
     </article>
