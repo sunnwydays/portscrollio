@@ -336,7 +336,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
             labels={false}
             muted={muted}
             showUnmuteHint={showUnmuteHint && isInView}
-            onOpenTech={() => setTechOpen(true)}
+            onOpenTech={() => setTechOpen((o) => !o)}
             onToggleMute={handleUnmute}
           />
         </div>
@@ -383,7 +383,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
             labels={true}
             muted={muted}
             showUnmuteHint={showUnmuteHint && isInView}
-            onOpenTech={() => setTechOpen(true)}
+            onOpenTech={() => setTechOpen((o) => !o)}
             onToggleMute={handleUnmute}
           />
           {/* Slide-out panel */}
