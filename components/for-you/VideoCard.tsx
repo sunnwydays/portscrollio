@@ -337,7 +337,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
       >
         <div className="flex flex-wrap gap-2 mb-3">
           {hashtags.map((tag) => (
-            <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
+            <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
               {tag}
             </span>
           ))}
@@ -406,7 +406,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         <div className="flex flex-col justify-end self-stretch pb-14 px-10">
           <div className="flex flex-wrap gap-2 mb-3">
             {hashtags.map((tag) => (
-              <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-secondary text-[10px] font-semibold uppercase tracking-wider">
+              <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
                 {tag}
               </span>
             ))}

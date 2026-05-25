@@ -20,7 +20,7 @@ export default async function ResumePage() {
           <p className="font-display font-bold text-lg text-on-surface leading-tight">
             A PDF is just words.
           </p>
-          <p className="text-sm text-outline mt-1">
+          <p className="text-sm text-on-surface/85 mt-1">
             Hear me out - I&apos;m more than that.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default async function ResumePage() {
       {/* Mobile fallback — PDF embed doesn't work on mobile browsers */}
       {resumeUrl && (
         <div className="md:hidden flex flex-col items-center gap-4 px-6 py-12 text-center">
-          <p className="text-outline text-sm">PDF preview is unsupported on mobile.</p>
+          <p className="text-on-surface/85 text-sm">PDF preview is unsupported on mobile.</p>
           <a
             href={resumeUrl}
             target="_blank"
@@ -64,7 +64,7 @@ export default async function ResumePage() {
         <p className="font-display font-bold text-2xl text-on-surface">
           Watch, don&apos;t read
         </p>
-        <p className="text-outline text-sm max-w-sm leading-relaxed">
+        <p className="text-on-surface/85 text-sm max-w-sm leading-relaxed">
           The resume is a boring list.{" "}
           <span className="text-on-surface font-medium">For You</span> <i>shows</i> what I made and why.
         </p>

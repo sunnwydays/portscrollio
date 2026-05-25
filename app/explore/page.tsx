@@ -28,7 +28,7 @@ export default async function ExplorePage() {
           <span className="text-4xl lg:text-5xl">Sunny&apos;s&nbsp;</span>
           <span className="text-4xl lg:text-5xl text-primary">Thoughts</span>
         </h1>
-        <p className="mt-3 text-sm text-outline max-w-md leading-relaxed">
+        <p className="mt-3 text-sm text-on-surface/85 max-w-md leading-relaxed">
           I&apos;ve been thinking the things there are to think about life. Take a look to find a new perspective.
         </p>
 

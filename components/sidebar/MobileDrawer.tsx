@@ -71,7 +71,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
           </div>
           <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
-          <p className="text-sm text-outline mt-0.5">UofT Computer Engineering</p>
+          <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
           <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
         </div>
 
@@ -80,13 +80,13 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
 
         {/* Activity Feed */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-3">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-4">Activity Feed</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-on-surface/75 mb-4">Activity Feed</p>
 
           {/* Latest commit */}
           <div className="bg-surface-container rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <GitCommitIcon className="w-4 h-4 text-secondary" />
-              <span className="text-[10px] uppercase tracking-widest text-outline font-semibold">Last Commit</span>
+              <span className="text-[10px] uppercase tracking-widest text-on-surface/75 font-semibold">Last Commit</span>
             </div>
             <p className="text-sm text-primary font-medium leading-snug">&ldquo;{settings.latest_commit}&rdquo;</p>
           </div>
@@ -104,7 +104,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
                   ) : (
                     <DumbbellIcon className="w-4 h-4 text-secondary" />
                   )}
-                  <span className="text-[10px] uppercase tracking-widest text-outline font-semibold truncate">
+                  <span className="text-[10px] uppercase tracking-widest text-on-surface/75 font-semibold truncate">
                     {stat.label}
                   </span>
                 </div>
@@ -116,7 +116,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
                         style={{ width: `${progressVal}%` }}
                       />
                     </div>
-                    <span className="text-xs text-outline">{stat.value}</span>
+                    <span className="text-xs text-on-surface/80">{stat.value}</span>
                   </div>
                 ) : (
                   <p className="text-2xl font-display font-bold text-on-surface">{stat.value}</p>
@@ -128,7 +128,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
 
         {/* Connect */}
         <div className="px-6 py-5 border-t border-outline-variant/20">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-4">Connect</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-on-surface/75 mb-4">Connect</p>
           <div className="flex gap-4">
             {settings.github_url && (
               <a href={settings.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-outline hover:text-primary transition-colors">

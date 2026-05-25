@@ -68,10 +68,10 @@ export function PostCard({ post, aspectRatio = 'aspect-video' }: PostCardProps) 
 
         {/* Card body */}
         <div className="p-4">
-          <h3 className="font-display font-semibold text-on-surface text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-display font-semibold text-white text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h3>
-          <p className="mt-2 text-xs text-outline">
+          <p className="mt-2 text-xs text-on-surface/80">
             {post.category} · {timeAgo(post.published_at)}
           </p>
         </div>
