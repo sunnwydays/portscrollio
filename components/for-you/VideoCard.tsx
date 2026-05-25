@@ -35,18 +35,20 @@ interface ActionButtonsProps {
   labels: boolean;
   muted: boolean;
   showUnmuteHint: boolean;
+  dimCircles?: boolean;
   onOpenTech: () => void;
   onToggleMute: () => void;
 }
 
-function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpenTech, onToggleMute }: ActionButtonsProps) {
+function ActionButtons({ project, techList, labels, muted, showUnmuteHint, dimCircles = false, onOpenTech, onToggleMute }: ActionButtonsProps) {
+  const circleBg = dimCircles ? "bg-black/40" : "bg-surface-container-high/80";
   return (
     <div className="flex flex-col items-center gap-2">
       {project.github_url && (
         <a href={project.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
           className="flex flex-col items-center gap-1.5 group">
-          <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
-            <GitHubIcon className="w-5 h-5" />
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <GitHubIcon className="w-6 h-6" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">GitHub</span>}
         </a>
@@ -54,8 +56,8 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
       {project.website_url && (
         <a href={project.website_url} target="_blank" rel="noopener noreferrer" aria-label="Website"
           className="flex flex-col items-center gap-1.5 group">
-          <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
-            <GlobeIcon className="w-5 h-5" />
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <GlobeIcon className="w-6 h-6" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Site</span>}
         </a>
@@ -63,8 +65,8 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
       {project.video_url && (
         <a href={project.video_url} target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube"
           className="flex flex-col items-center gap-1.5 group">
-          <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
-            <YouTubeIcon className="w-5 h-5" />
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <YouTubeIcon className="w-6 h-6" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Video</span>}
         </a>
@@ -72,8 +74,8 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
       {techList.length > 0 && (
         <button onClick={onOpenTech} aria-label="View tech stack"
           className="flex flex-col items-center gap-1.5 group">
-          <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
-            <StackIcon className="w-5 h-5" />
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <StackIcon className="w-6 h-6" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Stack</span>}
         </button>
@@ -85,8 +87,8 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
             {showUnmuteHint && (
               <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
             )}
-            <div className={`w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center transition-all ${muted ? "text-outline group-hover:text-primary" : "text-primary"}`}>
-              {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
+            <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center transition-all ${muted ? "text-on-surface group-hover:text-primary" : "text-primary"}`}>
+              {muted ? <VolumeOffIcon className="w-6 h-6" /> : <VolumeOnIcon className="w-6 h-6" />}
             </div>
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
@@ -96,7 +98,7 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
             <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
               Tap to unmute
             </span>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 text-primary shrink-0">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary shrink-0">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
           </div>
@@ -355,7 +357,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
   );
 
   return (
-    <article ref={articleRef} className="h-dvh bg-surface">
+    <article ref={articleRef} className="h-dvh bg-surface-dim">
 
       {/* ─── Mobile: full-screen ─────────────────────────────────────────── */}
       <div className="lg:hidden h-full relative overflow-hidden">
@@ -373,13 +375,14 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         )}
         {bgContent}
 
-        <div className="absolute right-4 bottom-28 z-20">
+        <div className="absolute right-2 bottom-28 z-20">
           <ActionButtons
             project={project}
             techList={techList}
             labels={false}
             muted={muted}
             showUnmuteHint={showUnmuteHint && isInView}
+            dimCircles
             onOpenTech={() => setTechOpen((o) => !o)}
             onToggleMute={handleUnmute}
           />
