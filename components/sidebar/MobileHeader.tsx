@@ -21,7 +21,7 @@ export function MobileHeader({ settings, stats, avatarCategories, postSlugs }: M
         <div className="flex items-center gap-3">
           <ProfileAvatar categories={avatarCategories} className="w-9 h-9 rounded-xl" postSlugs={postSlugs} />
           <div className="flex flex-col">
-            <span className="font-display font-bold text-sm text-on-surface leading-tight">Sunny</span>
+            <span className="font-display font-bold text-sm text-on-surface leading-tight">Sunny Wu</span>
             <span className="text-xs text-outline leading-tight">UofT Computer Engineering</span>
           </div>
         </div>

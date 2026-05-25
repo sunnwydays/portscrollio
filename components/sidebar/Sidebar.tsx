@@ -20,7 +20,7 @@ export function Sidebar({ settings, stats, avatarCategories, postSlugs }: Sideba
           <ProfileAvatar categories={avatarCategories} postSlugs={postSlugs} />
           <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" aria-hidden="true" />
         </div>
-        <p className="font-display font-bold text-xl text-on-surface leading-tight">Sunny</p>
+        <p className="font-display font-bold text-xl text-on-surface leading-tight">Sunny Wu</p>
         <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
 
         {/* Status */}
