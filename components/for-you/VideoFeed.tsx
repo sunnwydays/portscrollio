@@ -28,7 +28,14 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
     (next: number) => {
       if (lockRef.current) return;
       if (next >= count) {
-        setPlaylist((prev) => [...prev, ...buildPlaylist(projects)]);
+        setPlaylist((prev) => {
+          const newBatch = buildPlaylist(projects);
+          const lastVideo = prev[prev.length - 1];
+          if (newBatch.length >= 2 && lastVideo && newBatch[0].id === lastVideo.id) {
+            [newBatch[0], newBatch[1]] = [newBatch[1], newBatch[0]];
+          }
+          return [...prev, ...newBatch];
+        });
         indexRef.current = count;
         setIndex(count);
         lockRef.current = true;
