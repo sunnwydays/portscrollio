@@ -59,15 +59,6 @@ function ActionButtons({ project, techList, labels, dimCircles = false, onOpenTe
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Site</span>}
         </a>
       )}
-      {project.video_url && (
-        <a href={project.video_url} target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube"
-          className="flex flex-col items-center gap-1.5 group">
-          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
-            <YouTubeIcon className="w-6 h-6" />
-          </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Video</span>}
-        </a>
-      )}
       {techList.length > 0 && (
         <button onClick={onOpenTech} aria-label="View tech stack"
           className="flex flex-col items-center gap-1.5 group">
@@ -76,6 +67,15 @@ function ActionButtons({ project, techList, labels, dimCircles = false, onOpenTe
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Stack</span>}
         </button>
+      )}
+      {project.video_url && (
+        <a href={project.video_url} target="_blank" rel="noopener noreferrer" aria-label="Watch on YouTube"
+          className="flex flex-col items-center gap-1.5 group">
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <YouTubeIcon className="w-6 h-6" />
+          </div>
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Video</span>}
+        </a>
       )}
     </div>
   );
