@@ -33,14 +33,11 @@ interface ActionButtonsProps {
   project: Project;
   techList: string[];
   labels: boolean;
-  muted: boolean;
-  showUnmuteHint: boolean;
   dimCircles?: boolean;
   onOpenTech: () => void;
-  onToggleMute: () => void;
 }
 
-function ActionButtons({ project, techList, labels, muted, showUnmuteHint, dimCircles = false, onOpenTech, onToggleMute }: ActionButtonsProps) {
+function ActionButtons({ project, techList, labels, dimCircles = false, onOpenTech }: ActionButtonsProps) {
   const circleBg = dimCircles ? "bg-black/40" : "bg-surface-container-high/80";
   return (
     <div className="flex flex-col items-center gap-2">
@@ -80,30 +77,6 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, dimCi
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Stack</span>}
         </button>
       )}
-      <div className="relative">
-        <button onClick={onToggleMute} aria-label={muted ? "Unmute" : "Mute"}
-          className="flex flex-col items-center gap-1.5 group">
-          <div className="relative">
-            {showUnmuteHint && (
-              <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
-            )}
-            <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center transition-all ${muted ? "text-on-surface group-hover:text-primary" : "text-primary"}`}>
-              {muted ? <VolumeOffIcon className="w-6 h-6" /> : <VolumeOnIcon className="w-6 h-6" />}
-            </div>
-          </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
-        </button>
-        {showUnmuteHint && (
-          <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
-            <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
-              Tap to unmute
-            </span>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary shrink-0">
-              <path d="M3 8h10M9 4l4 4-4 4" />
-            </svg>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -368,16 +341,33 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         )}
         {bgContent}
 
+        {/* Volume button — top-left of video (mobile) */}
+        <button onClick={handleUnmute} aria-label={muted ? "Unmute" : "Mute"} className="absolute top-16 left-3 z-40 text-white">
+          <div className="relative">
+            {showUnmuteHint && isInView && (
+              <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
+            )}
+            {muted ? <VolumeOffIcon className="w-7 h-7" /> : <VolumeOnIcon className="w-7 h-7" />}
+            {showUnmuteHint && isInView && (
+              <div className="absolute top-1/2 left-full -translate-y-1/2 ml-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary shrink-0">
+                  <path d="M13 8H3M7 4l-4 4 4 4" />
+                </svg>
+                <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
+                  Tap to unmute
+                </span>
+              </div>
+            )}
+          </div>
+        </button>
+
         <div className="absolute right-2 bottom-28 z-20">
           <ActionButtons
             project={project}
             techList={techList}
             labels={false}
-            muted={muted}
-            showUnmuteHint={showUnmuteHint && isInView}
             dimCircles
             onOpenTech={() => setTechOpen((o) => !o)}
-            onToggleMute={handleUnmute}
           />
         </div>
 
@@ -414,7 +404,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         <div className="flex h-full items-center gap-4">
 
           {/* 9:16 video frame — matches vertical short format */}
-          <div className="relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+          <div className="group relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
             {isDesktop === true && embedSrc && shouldMountIframe && (
               <iframe
                 ref={iframeRef}
@@ -428,6 +418,26 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
               />
             )}
             {bgContent}
+
+            {/* Volume button — top-left of video */}
+            <button onClick={handleUnmute} aria-label={muted ? "Unmute" : "Mute"} className={`absolute top-7 left-7 z-20 text-white transition-opacity duration-150 ${(paused || (showUnmuteHint && isInView)) ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+              <div className="relative">
+                {showUnmuteHint && isInView && (
+                  <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
+                )}
+                {muted ? <VolumeOffIcon className="w-9 h-9" /> : <VolumeOnIcon className="w-9 h-9" />}
+                {showUnmuteHint && isInView && (
+                  <div className="absolute top-1/2 left-full -translate-y-1/2 ml-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary shrink-0">
+                      <path d="M13 8H3M7 4l-4 4 4 4" />
+                    </svg>
+                    <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
+                      Tap to unmute
+                    </span>
+                  </div>
+                )}
+              </div>
+            </button>
           </div>
 
           {/* Action buttons — always visible, tech panel slides in beside them */}
@@ -436,10 +446,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
               project={project}
               techList={techList}
               labels={true}
-              muted={muted}
-              showUnmuteHint={showUnmuteHint && isInView}
               onOpenTech={() => setTechOpen((o) => !o)}
-              onToggleMute={handleUnmute}
             />
             {/* Slide-out panel */}
             <div
