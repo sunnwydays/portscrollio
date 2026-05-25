@@ -107,6 +107,7 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
             muted={muted}
             onToggleMute={handleToggleMute}
             showUnmuteHint={showUnmuteHint}
+            isFirst={i === 0}
           />
         ))}
       </div>
