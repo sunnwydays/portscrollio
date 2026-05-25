@@ -138,9 +138,11 @@ interface VideoCardProps {
   muted: boolean;
   onToggleMute: () => void;
   showUnmuteHint: boolean;
+  isNext?: boolean;
+  isFirst?: boolean;
 }
 
-export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext = false, isFirst = false }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -150,6 +152,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
   const articleRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const pauseHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isNextRef = useRef(false);
 
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
@@ -157,6 +160,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
   const videoLoaded = loadedKey === "loaded";
   const currentTimeRef = useRef<number>(0);
   const [embedConfig, setEmbedConfig] = useState<{ mute: 0 | 1; start: number }>(() => ({ mute: muted ? 1 : 0, start: 0 }));
+
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -166,16 +170,25 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
     return () => mq.removeEventListener("change", update);
   }, []);
 
+  // shouldMountIframe: pre-mount while next in queue, keep mounted while active
+  const shouldMountIframe = isInView || isNext;
+
   // Observe when card enters/leaves viewport
   useEffect(() => {
     const el = articleRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(entry.isIntersecting);
-        if (!entry.isIntersecting) {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          // Reset so a new iframe always waits for its own onLoad before showing
           setLoadedKey(null);
-          setPaused(false);
+        } else {
+          setIsInView(false);
+          if (!isNextRef.current) {
+            setLoadedKey(null);
+            setPaused(false);
+          }
         }
       },
       { threshold: 0.5 }
@@ -183,6 +196,11 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Keep isNextRef in sync so the observer closure sees the latest value
+  useEffect(() => {
+    isNextRef.current = isNext;
+  }, [isNext]);
 
   // Subscribe to YouTube infoDelivery events to track current time for AV resync on unmute
   useEffect(() => {
@@ -256,6 +274,19 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
         aria-hidden="true"
       />
 
+      {/* YouTube thumbnail — loads before the iframe, eliminates gradient flash */}
+      {videoId && (
+        <Image
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 54vh, 100vw"
+          className="object-cover"
+          aria-hidden={true}
+          priority={isFirst}
+        />
+      )}
+
       {/* Radial glow overlay */}
       <div
         className="absolute inset-0 opacity-20"
@@ -319,11 +350,11 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
 
       {/* ─── Mobile: full-screen ─────────────────────────────────────────── */}
       <div className="lg:hidden h-full relative overflow-hidden">
-        {isDesktop === false && embedSrc && isInView && (
+        {isDesktop === false && embedSrc && shouldMountIframe && (
           <iframe
             ref={iframeRef}
             src={embedSrc}
-            className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded && isInView ? "opacity-100" : "opacity-0"}`}
             allow="autoplay; encrypted-media"
             allowFullScreen
             style={{ border: 0 }}
@@ -386,11 +417,11 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint }: Vide
 
           {/* 9:16 video frame — matches vertical short format */}
           <div className="relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
-            {isDesktop === true && embedSrc && isInView && (
+            {isDesktop === true && embedSrc && shouldMountIframe && (
               <iframe
                 ref={iframeRef}
                 src={embedSrc}
-                className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded ? "opacity-100" : "opacity-0"}`}
+                className={`absolute inset-0 w-full h-full pointer-events-none z-2 transition-opacity duration-700 ${videoLoaded && isInView ? "opacity-100" : "opacity-0"}`}
                 allow="autoplay; encrypted-media"
                 allowFullScreen
                 style={{ border: 0 }}
