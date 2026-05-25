@@ -337,21 +337,14 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         className="absolute bottom-0 left-0 right-0 pl-5 pr-20 pt-6 pb-20 z-10 lg:hidden"
         style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.67) 100%)" }}
       >
-        <div className="flex flex-wrap gap-2 mb-2">
-          {hashtags.map((tag) => (
-            <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/40 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
-              {tag}
-            </span>
-          ))}
-          {project.is_hobby && (
-            <span className="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
-              Hobby
-            </span>
-          )}
-        </div>
-        <h2 className="font-display font-bold text-lg lg:text-xl text-on-surface leading-tight tracking-tight filter-[drop-shadow(0_2px_12px_black)_drop-shadow(0_4px_24px_rgba(0,0,0,0.9))]">
+        <h2 className="font-display font-bold text-lg lg:text-xl text-white leading-tight tracking-tight filter-[drop-shadow(0_2px_12px_black)_drop-shadow(0_4px_24px_rgba(0,0,0,0.9))]">
           {project.title}
         </h2>
+        {(hashtags.length > 0 || project.is_hobby) && (
+          <p className="text-white text-sm font-bold mt-1">
+            {[...hashtags, ...(project.is_hobby ? ["hobby"] : [])].map((t) => `#${t.toLowerCase()}`).join(" ")}
+          </p>
+        )}
       </div>
     </>
   );
@@ -407,21 +400,14 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
 
         {/* Left side — title + tags, fills space from sidebar to video */}
         <div className="flex flex-col justify-end self-stretch pb-14 px-10">
-          <div className="flex flex-wrap gap-2 mb-2">
-            {hashtags.map((tag) => (
-              <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
-                {tag}
-              </span>
-            ))}
-            {project.is_hobby && (
-              <span className="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
-                Hobby
-              </span>
-            )}
-          </div>
-          <h2 className="font-display font-bold text-xl text-on-surface leading-tight tracking-tight">
+          <h2 className="font-display font-bold text-xl text-white leading-tight tracking-tight">
             {project.title}
           </h2>
+          {(hashtags.length > 0 || project.is_hobby) && (
+            <p className="text-white text-sm font-bold mt-1">
+              {[...hashtags, ...(project.is_hobby ? ["hobby"] : [])].map((t) => `#${t.toLowerCase()}`).join(" ")}
+            </p>
+          )}
         </div>
 
         {/* Center — video + action buttons grouped so the pair is what gets centered */}
