@@ -63,3 +63,5 @@ I don't know if this'll work, and that's the joy of it!
 ---
 
 Feel free to clone and make your own Portscrollio `:)`
+
+See [SETUP.md](SETUP.md) for a full guide on how to configure it for yourself.
