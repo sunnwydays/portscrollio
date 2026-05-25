@@ -335,7 +335,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         className="absolute bottom-0 left-0 right-0 pl-5 pr-20 pt-6 pb-20 z-10 lg:hidden"
         style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.67) 100%)" }}
       >
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-2">
           {hashtags.map((tag) => (
             <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/40 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
               {tag}
@@ -404,7 +404,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
 
         {/* Left side — title + tags, fills space from sidebar to video */}
         <div className="flex flex-col justify-end self-stretch pb-14 px-10">
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 mb-2">
             {hashtags.map((tag) => (
               <span key={tag} className="px-2.5 py-1 rounded-full bg-surface-container-high/80 backdrop-blur-sm text-on-surface/90 text-[10px] font-semibold uppercase tracking-wider">
                 {tag}
