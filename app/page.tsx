@@ -7,7 +7,6 @@ export default async function ForYouPage() {
   const { data } = await supabase
     .from("projects")
     .select("*")
-    .order("order_index");
 
   const projects: Project[] = data ?? [];
 

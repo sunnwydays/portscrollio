@@ -10,7 +10,6 @@ export interface Project {
   bg_from: string;
   bg_to: string;
   tags: string;
-  order_index: number;
 }
 
 export interface Post {
@@ -56,7 +55,6 @@ export const mockProjects: Project[] = [
     bg_from: "#061a1a",
     bg_to: "#0b2d25",
     tags: "DISTRIBUTED SYSTEMS,RUST",
-    order_index: 1,
   },
   {
     id: "robot-arm",
@@ -70,7 +68,6 @@ export const mockProjects: Project[] = [
     bg_from: "#0a1020",
     bg_to: "#12203a",
     tags: "HARDWARE,ROBOTICS",
-    order_index: 2,
   },
   {
     id: "gym-montage",
@@ -84,7 +81,6 @@ export const mockProjects: Project[] = [
     bg_from: "#1a0a0a",
     bg_to: "#2d1010",
     tags: "HOBBY,FITNESS",
-    order_index: 3,
   },
   {
     id: "kernel-rust",
@@ -98,7 +94,6 @@ export const mockProjects: Project[] = [
     bg_from: "#0a0a1a",
     bg_to: "#10102d",
     tags: "OPERATING SYSTEMS,RUST",
-    order_index: 4,
   },
   {
     id: "esp32-overclock",
@@ -112,7 +107,6 @@ export const mockProjects: Project[] = [
     bg_from: "#1a0f00",
     bg_to: "#2d1a00",
     tags: "EMBEDDED,HARDWARE",
-    order_index: 5,
   },
   {
     id: "llm-zero-dollars",
@@ -126,7 +120,6 @@ export const mockProjects: Project[] = [
     bg_from: "#0d0a1a",
     bg_to: "#1a1030",
     tags: "MACHINE LEARNING,AI",
-    order_index: 6,
   },
 ];
 
