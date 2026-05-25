@@ -121,12 +121,11 @@ interface VideoCardProps {
   project: Project;
   muted: boolean;
   onToggleMute: () => void;
-  showUnmuteHint: boolean;
   isNext?: boolean;
   isFirst?: boolean;
 }
 
-export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext = false, isFirst = false }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirst = false }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -138,6 +137,8 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
   const pauseHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tapStartRef = useRef<{ y: number; time: number } | null>(null);
   const isNextRef = useRef(false);
+  const [hintPhase, setHintPhase] = useState<"expanded" | "collapsed">("expanded");
+  const hintStartedRef = useRef(false);
 
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
@@ -186,6 +187,14 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
   useEffect(() => {
     isNextRef.current = isNext;
   }, [isNext]);
+
+  // Auto-collapse unmute hint rectangle → square after 3s (fires once per card)
+  useEffect(() => {
+    if (!isInView || !muted || hintStartedRef.current) return;
+    hintStartedRef.current = true;
+    const t = setTimeout(() => setHintPhase("collapsed"), 3000);
+    return () => clearTimeout(t);
+  }, [isInView, muted]);
 
   // Subscribe to YouTube infoDelivery events to track current time for AV resync on unmute
   useEffect(() => {
@@ -358,25 +367,17 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         )}
         {bgContent}
 
-        {/* Volume button — top-left of video (mobile) */}
-        <button onClick={handleUnmute} aria-label={muted ? "Unmute" : "Mute"} className="absolute top-16 left-3 z-40 text-white">
-          <div className="relative">
-            {showUnmuteHint && isInView && (
-              <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
-            )}
-            {muted ? <VolumeOffIcon className="w-7 h-7" /> : <VolumeOnIcon className="w-7 h-7" />}
-            {showUnmuteHint && isInView && (
-              <div className="absolute top-1/2 left-full -translate-y-1/2 ml-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary shrink-0">
-                  <path d="M13 8H3M7 4l-4 4 4 4" />
-                </svg>
-                <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
-                  Tap to unmute
-                </span>
-              </div>
-            )}
-          </div>
-        </button>
+        {/* Volume button — top-left of video (mobile), disappears on unmute */}
+        {muted && (
+          <button onClick={handleUnmute} aria-label="Unmute" className="absolute top-18 left-4 z-40">
+            <div className="flex items-center bg-white rounded-xs p-3">
+              <VolumeOffIcon className="w-7 h-7 text-black shrink-0" />
+              <span className={`whitespace-nowrap text-[15px] font-bold uppercase tracking-wider text-black overflow-hidden transition-all duration-400 ${hintPhase === "expanded" ? "max-w-45 ml-3 opacity-100" : "max-w-0 ml-0 opacity-0"}`}>
+                Tap to unmute
+              </span>
+            </div>
+          </button>
+        )}
 
         <div className="absolute right-2 bottom-28 z-20">
           <ActionButtons
@@ -436,24 +437,22 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
             )}
             {bgContent}
 
-            {/* Volume button — top-left of video */}
-            <button onClick={handleUnmute} aria-label={muted ? "Unmute" : "Mute"} className={`absolute top-7 left-7 z-20 text-white transition-opacity duration-150 ${(paused || (showUnmuteHint && isInView)) ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-              <div className="relative">
-                {showUnmuteHint && isInView && (
-                  <div className="absolute inset-0 rounded-full animate-ping bg-primary/40 pointer-events-none" />
-                )}
-                {muted ? <VolumeOffIcon className="w-9 h-9" /> : <VolumeOnIcon className="w-9 h-9" />}
-                {showUnmuteHint && isInView && (
-                  <div className="absolute top-1/2 left-full -translate-y-1/2 ml-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary shrink-0">
-                      <path d="M13 8H3M7 4l-4 4 4 4" />
-                    </svg>
-                    <span className="text-[10px] font-semibold text-primary bg-surface-container-high/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg whitespace-nowrap uppercase tracking-wider">
-                      Tap to unmute
-                    </span>
-                  </div>
-                )}
-              </div>
+            {/* Volume button — top-left of video (desktop) */}
+            <button
+              onClick={handleUnmute}
+              aria-label={muted ? "Unmute" : "Mute"}
+              className={`absolute top-7 left-7 z-20 transition-opacity duration-150 ${muted ? "opacity-100" : (paused ? "opacity-100" : "opacity-0 group-hover:opacity-100")}`}
+            >
+              {muted ? (
+                <div className="flex items-center bg-white rounded-xs p-3">
+                  <VolumeOffIcon className="w-7 h-7 text-black shrink-0" />
+                  <span className={`whitespace-nowrap text-[15px] font-bold uppercase tracking-wider text-black overflow-hidden transition-all duration-400 ${hintPhase === "expanded" ? "max-w-45 ml-3 opacity-100" : "max-w-0 ml-0 opacity-0"}`}>
+                    Tap to unmute
+                  </span>
+                </div>
+              ) : (
+                <VolumeOnIcon className="w-9 h-9 text-white" />
+              )}
             </button>
           </div>
 

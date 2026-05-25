@@ -14,7 +14,6 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
   const [playlist, setPlaylist] = useState(initialPlaylist);
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
-  const [showUnmuteHint, setShowUnmuteHint] = useState(true);
   const indexRef = useRef(0);
   const lockRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -23,18 +22,7 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
   const pendingDir = useRef(0);
   const count = playlist.length;
 
-  // Auto-dismiss unmute hint after 6 seconds
-  useEffect(() => {
-    const t = setTimeout(() => setShowUnmuteHint(false), 6767);
-    return () => clearTimeout(t);
-  }, []);
-
-  const handleToggleMute = useCallback(() => {
-    setMuted((m) => {
-      if (m) setShowUnmuteHint(false);
-      return !m;
-    });
-  }, []);
+  const handleToggleMute = useCallback(() => setMuted((m) => !m), []);
 
   const go = useCallback(
     (next: number) => {
@@ -106,7 +94,6 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
             project={project}
             muted={muted}
             onToggleMute={handleToggleMute}
-            showUnmuteHint={showUnmuteHint}
             isFirst={i === 0}
           />
         ))}
