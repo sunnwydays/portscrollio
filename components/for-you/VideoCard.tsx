@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Project } from "@/lib/mock-data";
-import { GitHubIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
+import { GitHubIcon, GlobeIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
 const TECH_ICONS: Record<string, string> = {
   "React":          "/icons/tech/react.png",
@@ -49,6 +49,15 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
             <GitHubIcon className="w-5 h-5" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">GitHub</span>}
+        </a>
+      )}
+      {project.website_url && (
+        <a href={project.website_url} target="_blank" rel="noopener noreferrer" aria-label="Website"
+          className="flex flex-col items-center gap-1.5 group">
+          <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
+            <GlobeIcon className="w-5 h-5" />
+          </div>
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Site</span>}
         </a>
       )}
       {project.video_url && (

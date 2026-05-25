@@ -4,6 +4,7 @@ export interface Project {
   description: string;
   video_url: string;
   github_url: string;
+  website_url?: string;
   tech: string;
   is_hobby: boolean;
   bg_from: string;
