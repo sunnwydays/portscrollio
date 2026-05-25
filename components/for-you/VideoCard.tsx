@@ -136,6 +136,7 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
   const articleRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const pauseHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tapStartRef = useRef<{ y: number; time: number } | null>(null);
   const isNextRef = useRef(false);
 
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
@@ -245,6 +246,20 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
     pauseHintTimer.current = setTimeout(() => setShowPauseHint(false), 700);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    tapStartRef.current = { y: e.touches[0].clientY, time: Date.now() };
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!tapStartRef.current) return;
+    const dy = Math.abs(e.changedTouches[0].clientY - tapStartRef.current.y);
+    const dt = Date.now() - tapStartRef.current.time;
+    tapStartRef.current = null;
+    if (dy < 10 && dt < 300) {
+      e.preventDefault();
+      togglePaused();
+    }
+  };
+
   const embedSrc = videoId
     ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${embedConfig.mute}&loop=1&playlist=${videoId}${embedConfig.start > 0 ? `&start=${embedConfig.start}` : ""}&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`
     : null;
@@ -278,17 +293,19 @@ export function VideoCard({ project, muted, onToggleMute, showUnmuteHint, isNext
         aria-hidden="true"
       />
 
-      {/* Click-to-pause overlay — desktop only; mobile YouTube iframe can't freeze frames */}
+      {/* Click-to-pause overlay */}
       <div
-        className="hidden lg:block absolute inset-0 z-15 cursor-pointer"
+        className="block absolute inset-0 z-15 lg:cursor-pointer"
         onClick={togglePaused}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         aria-label={paused ? "Play" : "Pause"}
         role="button"
       />
 
       {/* Pause/play hint — fades out after tap */}
       <div
-        className={`absolute inset-0 z-16 hidden lg:flex items-center justify-center pointer-events-none transition-opacity duration-500 ${showPauseHint ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 z-16 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${showPauseHint ? "opacity-100" : "opacity-0"}`}
         aria-hidden="true"
       >
         <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
