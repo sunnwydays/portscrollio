@@ -41,14 +41,14 @@ interface ActionButtonsProps {
 
 function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpenTech, onToggleMute }: ActionButtonsProps) {
   return (
-    <div className="flex flex-col items-center gap-7">
+    <div className="flex flex-col items-center gap-2">
       {project.github_url && (
         <a href={project.github_url} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
           className="flex flex-col items-center gap-1.5 group">
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <GitHubIcon className="w-5 h-5" />
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">GitHub</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">GitHub</span>}
         </a>
       )}
       {project.website_url && (
@@ -57,7 +57,7 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <GlobeIcon className="w-5 h-5" />
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Site</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Site</span>}
         </a>
       )}
       {project.video_url && (
@@ -66,7 +66,7 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <YouTubeIcon className="w-5 h-5" />
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Video</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Video</span>}
         </a>
       )}
       {techList.length > 0 && (
@@ -75,7 +75,7 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
           <div className="w-12 h-12 rounded-full bg-surface-container-high/80 backdrop-blur-sm flex items-center justify-center text-on-surface group-hover:text-primary transition-all">
             <StackIcon className="w-5 h-5" />
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">Stack</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Stack</span>}
         </button>
       )}
       <div className="relative">
@@ -89,7 +89,7 @@ function ActionButtons({ project, techList, labels, muted, showUnmuteHint, onOpe
               {muted ? <VolumeOffIcon className="w-5 h-5" /> : <VolumeOnIcon className="w-5 h-5" />}
             </div>
           </div>
-          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/50 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">{muted ? "Sound" : "Mute"}</span>}
         </button>
         {showUnmuteHint && (
           <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 flex items-center gap-2 pointer-events-none animate-bounce z-50">
