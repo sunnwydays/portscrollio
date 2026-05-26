@@ -14,6 +14,8 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
   const [playlist, setPlaylist] = useState(initialPlaylist);
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
+  const [desktopStackOpen, setDesktopStackOpen] = useState(false);
+  const handleDesktopToggleStack = useCallback(() => setDesktopStackOpen((s) => !s), []);
   const indexRef = useRef(0);
   const lockRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,6 +104,8 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
             muted={muted}
             onToggleMute={handleToggleMute}
             isFirst={i === 0}
+            desktopStackOpen={desktopStackOpen}
+            onDesktopToggleStack={handleDesktopToggleStack}
           />
         ))}
       </div>

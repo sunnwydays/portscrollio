@@ -123,9 +123,11 @@ interface VideoCardProps {
   onToggleMute: () => void;
   isNext?: boolean;
   isFirst?: boolean;
+  desktopStackOpen?: boolean;
+  onDesktopToggleStack?: () => void;
 }
 
-export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirst = false }: VideoCardProps) {
+export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirst = false, desktopStackOpen = false, onDesktopToggleStack }: VideoCardProps) {
   const [techOpen, setTechOpen] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
@@ -462,14 +464,14 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
               project={project}
               techList={techList}
               labels={true}
-              onOpenTech={() => setTechOpen((o) => !o)}
+              onOpenTech={() => onDesktopToggleStack?.()}
             />
             {/* Slide-out panel */}
             <div
-              className={`bg-surface-container-low rounded-2xl overflow-hidden transition-[max-width,opacity] duration-300 ease-out ${techOpen ? "max-w-64 opacity-100" : "max-w-0 opacity-0 pointer-events-none"}`}
+              className={`bg-surface-container-low rounded-2xl overflow-hidden transition-[max-width,opacity] duration-300 ease-out ${desktopStackOpen && techList.length > 0 ? "max-w-64 opacity-100" : "max-w-0 opacity-0 pointer-events-none"}`}
             >
               <div className="w-64">
-                <TechPanelContent techList={techList} onClose={() => setTechOpen(false)} />
+                <TechPanelContent techList={techList} onClose={() => onDesktopToggleStack?.()} />
               </div>
             </div>
           </div>
