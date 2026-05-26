@@ -4,6 +4,33 @@ The guide is written to be LLM-readable. At the bottom there is a Claude Code pr
 
 ---
 
+## Quick Setup (via Script)
+
+There is a setup script that automates the tedious parts. To use it:
+
+1. Copy the example config and fill it in:
+   ```sh
+   cp setup.config.example.json setup.config.json
+   # edit setup.config.json with your details
+   ```
+
+2. Run the script:
+   ```sh
+   node scripts/setup.js
+   ```
+
+The script will:
+- Replace the hardcoded name and school in the two sidebar components
+- Write a `.env.local` template (skipped if one already exists)
+- Generate `supabase-seed.sql` with all your INSERT statements, ready to paste into Supabase
+- Create `content/{slug}.md` files for any posts you included markdown for
+
+After running it, follow the checklist it prints: fill in `.env.local`, create the DB tables, paste the SQL, then `pnpm dev`.
+
+The rest of this guide explains each piece in detail if you want to understand what the script is doing or make changes manually.
+
+---
+
 ## Prerequisites
 
 - Node.js 18+ and pnpm (`npm i -g pnpm`)
@@ -133,7 +160,37 @@ These come from the `settings` table you already seeded in Step 2. You can updat
 
 ---
 
-## Step 5: Profile Avatars
+## Step 5: Theme and Style Customization
+
+All color tokens live in one place: [app/globals.css](app/globals.css) inside the `@theme` block. Changing a value there cascades to every component that uses that token.
+
+```css
+@theme {
+  /* Background surfaces -- the dark navy palette */
+  --color-surface:                   #0b1326;
+  --color-surface-container-low:     #131b2e;
+  --color-surface-container:         #1a2236;
+  /* ... more surface shades */
+
+  /* Accent -- swap these two for a different color personality */
+  --color-primary:                   #4edea3;   /* mint green */
+  --color-primary-container:         #10b981;
+
+  /* Text -- avoid pure white, use on-surface instead */
+  --color-on-surface:                #dae2fd;   /* lavender-white */
+  --color-secondary:                 #adc6ff;   /* periwinkle blue */
+}
+```
+
+**To change the accent color:** update `--color-primary` and `--color-primary-container` to any two shades of your chosen hue. Every button gradient, active nav indicator, stat value, and CTA inherits from these.
+
+**To change the base dark color:** update the `--color-surface-*` family together, keeping each step slightly lighter than the last (lowest to highest).
+
+**Fonts:** the display font (headlines) is Manrope and the body font is Inter, both loaded via `next/font/google` in `app/layout.tsx`. Swap either import to any Google Font.
+
+---
+
+## Step 6: Profile Avatars
 
 The profile picture in the sidebar is chosen randomly from three folders, each with a different probability:
 
@@ -150,7 +207,7 @@ To change the probabilities, open `components/sidebar/ProfileAvatar.tsx` and upd
 
 ---
 
-## Step 6: Projects (the For You Feed)
+## Step 7: Projects (the For You Feed)
 
 Each row in the `projects` table becomes a card in the vertical scroll feed.
 
@@ -173,7 +230,7 @@ Each row in the `projects` table becomes a card in the vertical scroll feed.
 
 ---
 
-## Step 7: Blog Posts and Write-ups (the Explore Grid)
+## Step 8: Blog Posts and Write-ups (the Explore Grid)
 
 A post has two parts: a database row for metadata and an optional Markdown file for the written content.
 
@@ -201,7 +258,7 @@ If no `.md` file exists but `video_url` is set, the detail page falls back to a 
 
 ---
 
-## Step 8: Stats and the Activity Feed
+## Step 9: Stats and the Activity Feed
 
 Each row in `stats` becomes a metric card in the sidebar.
 
@@ -215,7 +272,7 @@ I use this for anything that signals who I am beyond code: fitness PRs, language
 
 ---
 
-## Step 9: GitHub Activity (Latest Commit Card)
+## Step 10: GitHub Activity (Latest Commit Card)
 
 The sidebar shows your latest commit message, fetched live from the GitHub Search API.
 
@@ -226,13 +283,13 @@ The sidebar shows your latest commit message, fetched live from the GitHub Searc
 
 ---
 
-## Step 10: Deploy to Vercel
+## Step 11: Deploy to Vercel
 
 Connect your repo at [vercel.com](https://vercel.com). Vercel auto-detects Next.js and sets up the build pipeline. After connecting, go to your project's Settings > Environment Variables and add the same four variables from your `.env.local`.
 
 ---
 
-## Step 11: Making Videos
+## Step 12: Making Videos
 
 This is the hardest part and the most important one. Here's a summary from my notes.
 
@@ -261,6 +318,31 @@ Drop shadow over stroke for subtitles. Lo-fi or retro/game-adjacent background m
 Ship the first one imperfect. The fastest feedback loop is a real video, even if all the criticism is imagined. Making something public feels different. Future videos will teach you more than that first one ever will if you sit on it.
 
 PRACTICE
+
+---
+
+## Going Further
+
+The version you cloned is my personal portfolio, so a few things are opinionated. Here are the most common things people will want to change, plus ideas I have not built yet that would make this a better template.
+
+### Style personalization
+
+- **Accent color** -- one swap in `app/globals.css` changes every button, active indicator, and highlighted stat. Mint green is just what worked for my dark navy background.
+- **Fonts** -- Manrope (headlines) and Inter (body) are loaded in `app/layout.tsx` via `next/font/google`. Drop in any Google Font pair.
+- **Card gradients** -- the `bg_from` / `bg_to` columns on projects and posts let you set per-card colors. Going monochrome (all cards the same dark shade) or colorful (each card its own hue) are both viable directions.
+
+### Pages not yet built
+
+- **Resume page** -- the sidebar resume icon links to `/resume` but that route just redirects to an external URL right now. A proper implementation would embed a PDF from Supabase Storage so the resume stays in-app.
+- **About page** -- there is no `/about` route. A good place for a longer bio, gear list, or a photo gallery that does not fit in the sidebar.
+- **Explore tag filtering** -- the tag filter UI renders on `/explore` but the onClick logic is not wired up. Adding `?tag=RUST` query param handling on the server and filtering the Supabase query is the missing piece.
+- **Contact page** -- no contact form or email link beyond the sidebar icons.
+
+### Content ideas
+
+- Mix hobby videos freely. The playlist shuffler already supports it via `is_hobby: true`. The more variety in the feed, the more interesting the experience.
+- Write posts for projects that need more than a 60-second video. The `/explore/[slug]` route renders Markdown server-side, so a deep-dive engineering post works well alongside a short video card.
+- Keep stats fresh. A progress bar at 83% is more interesting than a static number. Anything you are actively working toward fits here.
 
 ---
 

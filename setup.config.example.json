@@ -1,0 +1,94 @@
+{
+  "_comment": "Copy this file to setup.config.json, fill in your details, then run: node scripts/setup.js",
+
+  "name": {
+    "full":  "Your Full Name",
+    "first": "FirstName"
+  },
+  "school": "Your School / Program",
+
+  "links": {
+    "github":   "https://github.com/your-username",
+    "linkedin": "https://linkedin.com/in/your-profile",
+    "resume":   ""
+  },
+
+  "status": "Open to summer 2026 roles",
+
+  "stats": [
+    {
+      "key":   "power_clean",
+      "label": "Power Clean 3RM",
+      "value": "100 kg",
+      "order": 1
+    },
+    {
+      "key":   "projects_shipped",
+      "label": "Projects Shipped",
+      "value": "12",
+      "order": 2
+    },
+    {
+      "key":   "languages",
+      "label": "Languages Spoken",
+      "value": "3",
+      "order": 3
+    }
+  ],
+
+  "projects": [
+    {
+      "title":       "My Project",
+      "description": "One or two sentences describing what the project does and why it's interesting.",
+      "video_url":   "https://youtube.com/watch?v=dQw4w9WgXcQ",
+      "github_url":  "https://github.com/your-username/repo",
+      "website_url": "",
+      "tech":        "React,TypeScript,PostgreSQL",
+      "is_hobby":    false,
+      "bg_from":     "#1a2236",
+      "bg_to":       "#0b1326",
+      "tags":        "WEB,TYPESCRIPT"
+    },
+    {
+      "title":       "A Hobby Clip",
+      "description": "Something fun that is not a software project.",
+      "video_url":   "https://youtube.com/watch?v=dQw4w9WgXcQ",
+      "github_url":  "https://github.com/your-username",
+      "website_url": "",
+      "tech":        "",
+      "is_hobby":    true,
+      "bg_from":     "#1a2236",
+      "bg_to":       "#0b1326",
+      "tags":        "HOBBY"
+    }
+  ],
+
+  "posts": [
+    {
+      "slug":          "my-first-post",
+      "title":         "My First Post",
+      "category":      "Reflections",
+      "video_url":     "",
+      "thumbnail_url": "",
+      "tags":          "LIFE",
+      "bg_from":       "#1a2236",
+      "bg_to":         "#0b1326",
+      "duration":      "",
+      "published_at":  "2025-01-15",
+      "markdown":      "# My First Post\n\nWrite your content here in Markdown. No frontmatter needed.\n\nAdd images by putting them in `public/blog/my-first-post/` and referencing them with `/blog/my-first-post/image.jpg`.\n"
+    },
+    {
+      "slug":          "a-video-post",
+      "title":         "A Video Post",
+      "category":      "Engineering",
+      "video_url":     "https://youtube.com/watch?v=dQw4w9WgXcQ",
+      "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+      "tags":          "WEB",
+      "bg_from":       "#1a2236",
+      "bg_to":         "#0b1326",
+      "duration":      "12:45",
+      "published_at":  "2025-02-01",
+      "markdown":      ""
+    }
+  ]
+}
