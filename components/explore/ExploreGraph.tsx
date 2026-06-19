@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
+  ControlButton,
   Controls,
   ReactFlow,
   useEdgesState,
@@ -22,24 +23,16 @@ import { FloatingEdge } from "@/components/explore/FloatingEdge";
 const nodeTypes: NodeTypes = { post: PostNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
 
-// Connections are faint accents on desktop, but need more presence on a small
-// touch screen where the graph is usually further zoomed out.
 const MOBILE_EDGE_STYLE = { stroke: "#adc6ff", strokeOpacity: 0.6, strokeWidth: 3 };
 
-// lg breakpoint — below it the layout is touch-first (no fixed sidebar).
 const MOBILE_QUERY = "(max-width: 1023px)";
-const HINT_KEY = "explore-graph-hint-seen";
+const HELP_SEEN_KEY = "explore-graph-help-seen";
 
 interface ExploreGraphProps {
   posts: Post[];
 }
 
 export function ExploreGraph({ posts }: ExploreGraphProps) {
-  // Resolve the viewport class before mounting React Flow. The mobile and
-  // desktop graphs differ enough (framing, edge weight, controls) that we build
-  // the right one up front rather than reconfiguring after paint. Rendering
-  // client-only also avoids the SSR hydration mismatch from timeAgo() + node
-  // measurement.
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_QUERY);
@@ -50,8 +43,120 @@ export function ExploreGraph({ posts }: ExploreGraphProps) {
   }, []);
 
   if (isMobile === null) return <div className="h-full w-full" aria-hidden="true" />;
-  // Remount on breakpoint change so the initial framing and edges rebuild cleanly.
   return <Graph key={isMobile ? "mobile" : "desktop"} posts={posts} isMobile={isMobile} />;
+}
+
+const HELP_ITEMS = [
+  { text: "Each tile is a blog post or video. Tap to explore.", delay: "[animation-delay:140ms]" },
+  { text: "Lines connect posts that share a topic.", delay: "[animation-delay:240ms]" },
+  {
+    text: "Drag the canvas to pan. Pinch or scroll to zoom. Drag tiles to rearrange.",
+    delay: "[animation-delay:340ms]",
+  },
+];
+
+/** A miniature of the real PostNode tile, drawn in SVG for the help diagram. */
+function MiniTile({ x, y, fill, play = false }: { x: number; y: number; fill: string; play?: boolean }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <rect width="44" height="30" rx="5" fill="#131b2e" />
+      <rect width="44" height="16" rx="5" fill={`url(#${fill})`} />
+      {play && <path d="M20 5 L20 11 L25 8 Z" fill="#dae2fd" fillOpacity="0.92" />}
+      <rect x="6" y="20" width="26" height="2.5" rx="1.25" fill="#dae2fd" fillOpacity="0.5" />
+      <rect x="6" y="24.5" width="16" height="2" rx="1" fill="#dae2fd" fillOpacity="0.28" />
+    </g>
+  );
+}
+
+/** Animated mini-graph: three tiles wired by flowing edges over pulsing glows. */
+function HelpDiagram() {
+  return (
+    <svg viewBox="0 0 220 112" className="w-full" aria-hidden="true">
+      <defs>
+        <radialGradient id="help-glow">
+          <stop offset="0%" stopColor="#4edea3" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#4edea3" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="help-thumb-1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#0566d9" />
+        </linearGradient>
+        <linearGradient id="help-thumb-2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#6ffbbe" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+        <linearGradient id="help-thumb-3" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#adc6ff" />
+          <stop offset="100%" stopColor="#0566d9" />
+        </linearGradient>
+        <linearGradient id="help-edge" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4edea3" />
+          <stop offset="100%" stopColor="#adc6ff" />
+        </linearGradient>
+      </defs>
+
+      {/* Node glows (behind everything) */}
+      <circle cx="36" cy="73" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:0ms]" />
+      <circle cx="114" cy="29" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:850ms]" />
+      <circle cx="182" cy="79" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:1700ms]" />
+
+      {/* Edges — flowing dashes, hidden under the tiles so only the gaps show */}
+      <path d="M36 73 L114 29" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow" />
+      <path d="M114 29 L182 79" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow [animation-delay:0.55s]" />
+
+      {/* Tiles on top */}
+      <MiniTile x={14} y={58} fill="help-thumb-1" play />
+      <MiniTile x={92} y={14} fill="help-thumb-2" />
+      <MiniTile x={160} y={64} fill="help-thumb-3" />
+    </svg>
+  );
+}
+
+function HelpPopup({ onClose }: { onClose: () => void }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="graph-help-overlay absolute inset-0 z-50 flex items-center justify-center p-6"
+      onClick={(e) => {
+        if (panelRef.current && !panelRef.current.contains(e.target as globalThis.Node)) onClose();
+      }}
+      role="presentation"
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-label="How to use the explore graph"
+        className="graph-help-pop w-full max-w-xs overflow-hidden rounded-2xl bg-surface-variant/60 p-5 ring-1 ring-outline-variant/15 backdrop-blur-[20px] shadow-[0_8px_32px_rgba(6,14,32,0.5)]"
+      >
+        <HelpDiagram />
+
+        <ul className="mt-4 space-y-2.5 text-sm text-on-surface/85">
+          {HELP_ITEMS.map((item) => (
+            <li key={item.text} className={`graph-help-bullet flex gap-2.5 ${item.delay}`}>
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          onClick={onClose}
+          className="mt-4 w-full rounded-lg bg-gradient-to-br from-primary to-primary-container py-2 text-sm font-semibold text-on-primary transition-shadow hover:shadow-[0_0_15px_rgba(111,251,190,0.35)]"
+        >
+          Ready to think!
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
@@ -63,33 +168,21 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
-  // First-load hint (mobile, once ever): a graph isn't an obvious touch UI.
-  // Safe to read storage in the initializer — Graph only ever mounts client-side.
-  const [showHint, setShowHint] = useState(() => {
+  const [showHelp, setShowHelp] = useState(() => {
     if (!isMobile) return false;
     try {
-      return !localStorage.getItem(HINT_KEY);
+      return !localStorage.getItem(HELP_SEEN_KEY);
     } catch {
       return false;
     }
   });
-  const dismissHint = useCallback(() => {
-    setShowHint(false);
+  const closeHelp = useCallback(() => {
+    setShowHelp(false);
     try {
-      localStorage.setItem(HINT_KEY, "1");
-    } catch {
-      // private mode / storage disabled — just let the hint not persist.
-    }
+      localStorage.setItem(HELP_SEEN_KEY, "1");
+    } catch {}
   }, []);
-  useEffect(() => {
-    if (!showHint) return;
-    const timer = setTimeout(dismissHint, 5000);
-    return () => clearTimeout(timer);
-  }, [showHint, dismissHint]);
 
-  // On mobile, frame the newest post (nodes are ordered newest-first) at a
-  // readable zoom and let the reader pan, instead of fitting the whole graph,
-  // which shrinks every tile to a thumbnail. Desktop uses fitView (below).
   const onInit = useCallback(
     (instance: ReactFlowInstance<PostFlowNode, Edge>) => {
       if (!isMobile || initialNodes.length === 0) return;
@@ -100,10 +193,7 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
   );
 
   return (
-    <div
-      className="relative h-full w-full"
-      onPointerDown={showHint ? dismissHint : undefined}
-    >
+    <div className="relative h-full w-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -127,15 +217,14 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
           showInteractive={false}
           position={isMobile ? "top-right" : "bottom-left"}
           fitViewOptions={isMobile ? { padding: 0.2, minZoom: 0.6, maxZoom: 1 } : { padding: 0.25 }}
-        />
+        >
+          <ControlButton onClick={() => setShowHelp(true)} aria-label="How to use this graph">
+            <span className="text-sm font-semibold leading-none">?</span>
+          </ControlButton>
+        </Controls>
       </ReactFlow>
-      {showHint && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center px-6">
-          <p className="rounded-full bg-surface-variant/60 px-4 py-2 text-xs font-medium text-on-surface/90 backdrop-blur-[20px]">
-            Drag to explore · tap a tile to open
-          </p>
-        </div>
-      )}
+
+      {showHelp && <HelpPopup onClose={closeHelp} />}
     </div>
   );
 }
