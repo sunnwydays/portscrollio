@@ -24,6 +24,8 @@ export interface Post {
   bg_to: string;
   duration: string | null;
   published_at: string;
+  /** Comma-separated slugs of related posts. Connections are undirected. */
+  related?: string | null;
 }
 
 export interface Stat {
@@ -138,6 +140,7 @@ export const mockPosts: Post[] = [
     bg_to: "#12203a",
     duration: "12:45",
     published_at: "2024-01-01T00:00:00Z",
+    related: "kernel-rust-day-45",
   },
   {
     id: "post-2",
@@ -151,6 +154,7 @@ export const mockPosts: Post[] = [
     bg_to: "#10102d",
     duration: "08:12",
     published_at: "2024-01-08T00:00:00Z",
+    related: "training-llms-zero-dollars",
   },
   {
     id: "post-3",

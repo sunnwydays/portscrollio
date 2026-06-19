@@ -76,6 +76,7 @@ pnpm lint    # eslint
 ## Conventions
 
 - Server Components by default. Only use `"use client"` when necessary.
-- Tailwind CSS 4 only — no other styling solutions.
+- Tailwind CSS 4 only - no other styling solutions.
 - `@/*` path alias for imports.
 - pnpm for package management (not npm or yarn).
+- **No emdash or double hyphens** in git commits, code, or code comments. Use commas, colons, or single hyphens for separation.

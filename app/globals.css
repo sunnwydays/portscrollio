@@ -44,3 +44,20 @@ body {
   color: #dae2fd;
   font-family: var(--font-inter, sans-serif);
 }
+
+/* React Flow — themed via custom properties (glassy controls, no hard borders) */
+.react-flow {
+  --xy-controls-button-background-color: rgba(45, 52, 73, 0.6);
+  --xy-controls-button-background-color-hover: rgba(45, 52, 73, 0.9);
+  --xy-controls-button-color: #dae2fd;
+  --xy-controls-button-color-hover: #dae2fd;
+  --xy-controls-button-border-color: rgba(60, 74, 66, 0.15);
+}
+.react-flow__controls {
+  box-shadow: none;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  backdrop-filter: blur(20px);
+}
