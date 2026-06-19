@@ -150,7 +150,7 @@ function HelpPopup({ onClose }: { onClose: () => void }) {
 
         <button
           onClick={onClose}
-          className="mt-4 w-full rounded-lg bg-gradient-to-br from-primary to-primary-container py-2 text-sm font-semibold text-on-primary transition-shadow hover:shadow-[0_0_15px_rgba(111,251,190,0.35)]"
+          className="mt-4 w-full cursor-pointer rounded-lg bg-gradient-to-br from-primary to-primary-container py-2 text-sm font-semibold text-on-primary transition-shadow hover:shadow-[0_0_15px_rgba(111,251,190,0.35)]"
         >
           Ready to think!
         </button>
