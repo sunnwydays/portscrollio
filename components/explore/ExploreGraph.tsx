@@ -23,8 +23,6 @@ import { FloatingEdge } from "@/components/explore/FloatingEdge";
 const nodeTypes: NodeTypes = { post: PostNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
 
-const MOBILE_EDGE_STYLE = { stroke: "#dae2fd", strokeOpacity: 0.7, strokeWidth: 3 };
-
 const MOBILE_QUERY = "(max-width: 1023px)";
 const HELP_SEEN_KEY = "explore-graph-help-seen";
 
@@ -48,7 +46,7 @@ export function ExploreGraph({ posts }: ExploreGraphProps) {
 
 const HELP_ITEMS = [
   { text: "Each tile is a blog post or video. Tap to explore.", delay: "[animation-delay:140ms]" },
-  { text: "Lines connect posts that share a topic.", delay: "[animation-delay:240ms]" },
+  { text: "Arrows point from one post to the next in a topic.", delay: "[animation-delay:240ms]" },
   {
     text: "Drag the canvas to pan. Pinch or scroll to zoom. Drag tiles to rearrange.",
     delay: "[animation-delay:340ms]",
@@ -93,6 +91,9 @@ function HelpDiagram() {
           <stop offset="0%" stopColor="#4edea3" />
           <stop offset="100%" stopColor="#adc6ff" />
         </linearGradient>
+        <marker id="help-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#adc6ff" />
+        </marker>
       </defs>
 
       {/* Node glows (behind everything) */}
@@ -100,9 +101,9 @@ function HelpDiagram() {
       <circle cx="114" cy="29" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:850ms]" />
       <circle cx="182" cy="79" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:1700ms]" />
 
-      {/* Edges — flowing dashes, hidden under the tiles so only the gaps show */}
-      <path d="M36 73 L114 29" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow" />
-      <path d="M114 29 L182 79" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow [animation-delay:0.55s]" />
+      {/* Core edges with flowing dashes and arrows */}
+      <path d="M36 73 L114 29" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" markerEnd="url(#help-arrow)" className="graph-edge-flow" />
+      <path d="M114 29 L182 79" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" markerEnd="url(#help-arrow)" className="graph-edge-flow [animation-delay:0.55s]" />
 
       {/* Tiles on top */}
       <MiniTile x={14} y={58} fill="help-thumb-1" play />
@@ -160,11 +161,7 @@ function HelpPopup({ onClose }: { onClose: () => void }) {
 }
 
 function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
-  const { nodes: initialNodes, edges: builtEdges } = useMemo(() => buildGraph(posts), [posts]);
-  const initialEdges = useMemo<Edge[]>(
-    () => (isMobile ? builtEdges.map((e) => ({ ...e, style: MOBILE_EDGE_STYLE })) : builtEdges),
-    [builtEdges, isMobile],
-  );
+  const { nodes: initialNodes, edges: initialEdges } = useMemo(() => buildGraph(posts), [posts]);
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 

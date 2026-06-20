@@ -19,18 +19,6 @@ type SimLink = SimulationLinkDatum<SimNode>;
 // Keep in sync with PostNode's rendered size (w-52 ≈ 208px, ~188px tall).
 export const NODE_WIDTH = 208;
 export const NODE_HEIGHT = 188;
-const EDGE_STYLE = { stroke: "#dae2fd", strokeOpacity: 0.6, strokeWidth: 2 };
-
-/**
- * Turn posts into React Flow nodes + edges with a force-directed layout.
- *
- * - Only posts with a `slug` become nodes (a slug is needed to link to / from).
- * - Edges come from each post's comma-separated `related` slugs, treated as
- *   undirected and de-duplicated (A→B and B→A collapse to one edge).
- * - Positions are computed with a d3-force simulation. d3 seeds initial
- *   positions deterministically (phyllotaxis, no RNG), so the layout is stable
- *   across renders.
- */
 export function buildGraph(posts: Post[]): { nodes: PostFlowNode[]; edges: Edge[] } {
   const linkable = posts.filter((p): p is Post & { slug: string } => Boolean(p.slug));
   const slugSet = new Set(linkable.map((p) => p.slug));
@@ -44,11 +32,15 @@ export function buildGraph(posts: Post[]): { nodes: PostFlowNode[]; edges: Edge[
       .filter(Boolean);
     for (const target of related) {
       if (target === post.slug || !slugSet.has(target)) continue;
-      const [a, b] = [post.slug, target].sort();
-      const key = `${a}--${b}`;
+      const key = `${post.slug}->${target}`;
       if (edgeKeys.has(key)) continue;
       edgeKeys.add(key);
-      edges.push({ id: key, source: a, target: b, type: "floating", style: EDGE_STYLE });
+      edges.push({
+        id: key,
+        source: post.slug,
+        target,
+        type: "floating",
+      });
     }
   }
 

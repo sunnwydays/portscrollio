@@ -127,12 +127,37 @@ body {
   animation: graph-node-pulse 2.6s ease-in-out infinite;
 }
 
+/* Explore graph edges: energy flow, connection pulses, particles */
+@keyframes edge-energy-flow {
+  to { stroke-dashoffset: -24; }
+}
+@keyframes edge-node-pulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.25; }
+  50% { transform: scale(2); opacity: 0.05; }
+}
+
+.edge-energy {
+  stroke-dasharray: 6 18;
+  stroke-opacity: 0.5;
+  animation: edge-energy-flow 1.8s linear infinite;
+}
+.edge-node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: edge-node-pulse 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .graph-help-overlay,
   .graph-help-pop,
   .graph-help-bullet,
   .graph-edge-flow,
-  .graph-node-pulse {
+  .graph-node-pulse,
+  .edge-energy,
+  .edge-node-pulse {
     animation: none;
+  }
+  .edge-particle {
+    display: none;
   }
 }
