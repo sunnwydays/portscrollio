@@ -127,24 +127,37 @@ body {
   animation: graph-node-pulse 2.6s ease-in-out infinite;
 }
 
-/* Explore graph edges: energy flow, connection pulses, particles */
-@keyframes edge-energy-flow {
-  to { stroke-dashoffset: -24; }
+/* Explore graph edges: steady resting threads that fire on hover. */
+/* A single bright band sweeps source -> target. pathLength is normalized to
+   100, so the dash sits just before the start at offset 20 and clears past the
+   end at -100. */
+@keyframes edge-sweep {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: -100; }
 }
-@keyframes edge-node-pulse {
-  0%, 100% { transform: scale(0.7); opacity: 0.25; }
-  50% { transform: scale(2); opacity: 0.05; }
+@keyframes edge-emit {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes edge-arrive {
+  0%, 100% { transform: scale(0.5); opacity: 0; }
+  12% { opacity: 0.55; }
+  45% { transform: scale(2); opacity: 0; }
 }
 
-.edge-energy {
-  stroke-dasharray: 6 18;
-  stroke-opacity: 0.5;
-  animation: edge-energy-flow 1.8s linear infinite;
+.edge-sweep {
+  stroke-dasharray: 20 100;
+  animation: edge-sweep linear infinite;
 }
-.edge-node-pulse {
+.edge-emit {
   transform-box: fill-box;
   transform-origin: center;
-  animation: edge-node-pulse 3s ease-in-out infinite;
+  animation: edge-emit linear infinite;
+}
+.edge-arrive {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: edge-arrive linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -153,11 +166,9 @@ body {
   .graph-help-bullet,
   .graph-edge-flow,
   .graph-node-pulse,
-  .edge-energy,
-  .edge-node-pulse {
+  .edge-sweep,
+  .edge-emit,
+  .edge-arrive {
     animation: none;
-  }
-  .edge-particle {
-    display: none;
   }
 }

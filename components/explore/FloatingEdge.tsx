@@ -1,11 +1,13 @@
 "use client";
 
+import { useContext } from "react";
 import {
   useInternalNode,
   type EdgeProps,
   type InternalNode,
   type Node,
 } from "@xyflow/react";
+import { GraphHoverContext } from "@/components/explore/graph-hover-context";
 
 function getNodeIntersection(node: InternalNode<Node>, target: InternalNode<Node>) {
   const w = (node.measured.width ?? 0) / 2;
@@ -40,6 +42,7 @@ function stableHash(s: string): number {
 }
 
 export function FloatingEdge({ id, source, target }: EdgeProps) {
+  const hoveredId = useContext(GraphHoverContext);
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
@@ -51,7 +54,6 @@ export function FloatingEdge({ id, source, target }: EdgeProps) {
   const dy = ty - sy;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-  const hash = stableHash(id);
   // Derive curve direction and magnitude from the unordered node pair so
   // reciprocal edges (A->B and B->A) trace the exact same arc and overlap
   // cleanly instead of forming a messy doubled line.
@@ -73,67 +75,92 @@ export function FloatingEdge({ id, source, target }: EdgeProps) {
   const angle = Math.atan2(ty - cy, tx - cx) * (180 / Math.PI);
 
   const safeId = id.replace(/[^a-zA-Z0-9]/g, "_");
-  const gradId = `eg_${safeId}`;
   const shadowId = `es_${safeId}`;
 
-  const dur = 2.2 + dist / 180;
-  const durStr = `${dur.toFixed(1)}s`;
-  const p2Begin = `${(dur * 0.4).toFixed(1)}s`;
-  const p3Begin = `${(dur * 0.7).toFixed(1)}s`;
+  // Hover-driven state: the source post is hovered -> this outgoing edge fires;
+  // some other node is hovered -> recede so the active web stands out; nothing
+  // hovered -> rest at a steady, legible opacity.
+  const isActive = hoveredId === source;
+  const isDimmed = hoveredId !== null && !isActive;
 
-  const glowDelay = `${(Math.abs(hash) % 25) / 10}s`;
+  // One pulse should take a fairly constant time to cross regardless of length,
+  // so longer edges run a touch slower.
+  const sweepDur = `${(1.1 + dist / 320).toFixed(2)}s`;
 
   return (
     <g>
       <defs>
-        <linearGradient id={gradId} x1={sx} y1={sy} x2={tx} y2={ty} gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#4edea3" />
-          <stop offset="50%" stopColor="#6ffbbe" />
-          <stop offset="100%" stopColor="#adc6ff" />
-        </linearGradient>
         <filter id={shadowId} x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#060e20" floodOpacity="0.5" />
         </filter>
       </defs>
 
-      {/* Core line with a soft drop shadow for depth */}
-      <path d={pathD} fill="none" stroke={`url(#${gradId})`} strokeWidth={2} strokeOpacity={0.8} filter={`url(#${shadowId})`} />
+      {/* Resting thread: steady when idle, brightens when its source fires,
+          recedes when another node is the focus. */}
+      <path
+        d={pathD}
+        fill="none"
+        stroke={isActive ? "#6ffbbe" : "#adc6ff"}
+        strokeWidth={isActive ? 2.5 : 1.5}
+        strokeLinecap="round"
+        filter={`url(#${shadowId})`}
+        style={{
+          strokeOpacity: isActive ? 0.9 : isDimmed ? 0.28 : 0.55,
+          transition: "stroke 220ms ease, stroke-width 220ms ease, stroke-opacity 220ms ease",
+        }}
+      />
 
-      {/* Energy flow: animated dashes traveling along the curve */}
-      <path d={pathD} fill="none" stroke={`url(#${gradId})`} strokeWidth={2} className="edge-energy" />
+      {/* Firing pulse: a single bright band sweeps source -> target on loop.
+          pathLength normalizes the dash math so every edge sweeps cleanly. */}
+      {isActive && (
+        <path
+          d={pathD}
+          pathLength={100}
+          fill="none"
+          stroke="#6ffbbe"
+          strokeWidth={3}
+          strokeLinecap="round"
+          className="edge-sweep"
+          style={{ animationDuration: sweepDur }}
+        />
+      )}
 
-      {/* Source connection pulse */}
-      <circle cx={sx} cy={sy} r={3} fill="#4edea3" className="edge-node-pulse" style={{ animationDelay: glowDelay }} />
+      {/* Source emits a ring each cycle as the idea leaves the post. */}
+      {isActive && (
+        <circle cx={sx} cy={sy} r={3.5} fill="#4edea3" className="edge-emit" style={{ animationDuration: sweepDur }} />
+      )}
 
       {/* Arrow at target */}
-      <g transform={`translate(${tx} ${ty}) rotate(${angle})`}>
-        <circle r={5} fill="#adc6ff" opacity={0.12} />
-        <path d="M -11 -7.5 L 0 0 L -11 7.5" fill="none" stroke="#adc6ff" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.85} />
+      <g
+        transform={`translate(${tx} ${ty}) rotate(${angle})`}
+        style={{
+          opacity: isActive ? 1 : isDimmed ? 0.3 : 0.5,
+          transition: "opacity 220ms ease",
+        }}
+      >
+        <path
+          d="M -11 -7.5 L 0 0 L -11 7.5"
+          fill="none"
+          stroke={isActive ? "#6ffbbe" : "#adc6ff"}
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ transition: "stroke 220ms ease" }}
+        />
       </g>
 
-      {/* Particle 1: green, largest */}
-      <g className="edge-particle">
-        <animateMotion dur={durStr} repeatCount="indefinite" path={pathD} />
-        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.85;1" dur={durStr} repeatCount="indefinite" />
-        <circle r={6} fill="#4edea3" opacity={0.15} />
-        <circle r={2.5} fill="#4edea3" />
-      </g>
-
-      {/* Particle 2: blue, medium */}
-      <g className="edge-particle">
-        <animateMotion dur={durStr} repeatCount="indefinite" path={pathD} begin={p2Begin} />
-        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.85;1" dur={durStr} repeatCount="indefinite" begin={p2Begin} />
-        <circle r={4} fill="#adc6ff" opacity={0.12} />
-        <circle r={2} fill="#adc6ff" />
-      </g>
-
-      {/* Particle 3: mint, smallest */}
-      <g className="edge-particle">
-        <animateMotion dur={durStr} repeatCount="indefinite" path={pathD} begin={p3Begin} />
-        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.85;1" dur={durStr} repeatCount="indefinite" begin={p3Begin} />
-        <circle r={3} fill="#6ffbbe" opacity={0.1} />
-        <circle r={1.5} fill="#6ffbbe" />
-      </g>
+      {/* Target flashes as each pulse lands. The delay phase-locks the flash to
+          the moment the sweep reaches the end of the path. */}
+      {isActive && (
+        <circle
+          cx={tx}
+          cy={ty}
+          r={6}
+          fill="#6ffbbe"
+          className="edge-arrive"
+          style={{ animationDuration: sweepDur, animationDelay: `calc(${sweepDur} * 0.72)` }}
+        />
+      )}
     </g>
   );
 }

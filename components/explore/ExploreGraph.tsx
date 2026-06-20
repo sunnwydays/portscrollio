@@ -19,6 +19,7 @@ import { Post } from "@/lib/mock-data";
 import { buildGraph, NODE_HEIGHT, NODE_WIDTH } from "@/lib/graph";
 import { PostNode, type PostFlowNode } from "@/components/explore/PostNode";
 import { FloatingEdge } from "@/components/explore/FloatingEdge";
+import { GraphHoverContext } from "@/components/explore/graph-hover-context";
 
 const nodeTypes: NodeTypes = { post: PostNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
@@ -164,6 +165,12 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => buildGraph(posts), [posts]);
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const onNodeMouseEnter = useCallback(
+    (_: unknown, node: PostFlowNode) => setHoveredId(node.id),
+    [],
+  );
+  const onNodeMouseLeave = useCallback(() => setHoveredId(null), []);
 
   const [showHelp, setShowHelp] = useState(() => {
     if (!isMobile) return false;
@@ -191,35 +198,39 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
 
   return (
     <div className="relative h-full w-full">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onInit={onInit}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        nodeDragThreshold={isMobile ? 8 : 1}
-        fitView={!isMobile}
-        fitViewOptions={{ padding: 0.25 }}
-        minZoom={isMobile ? 0.45 : 0.2}
-        maxZoom={1.5}
-        nodesConnectable={false}
-        elementsSelectable={false}
-        proOptions={{ hideAttribution: true }}
-        className="bg-surface"
-      >
-        <Background variant={BackgroundVariant.Dots} gap={28} size={1.5} color="#222a3d" />
-        <Controls
-          showInteractive={false}
-          position={isMobile ? "top-right" : "bottom-left"}
-          fitViewOptions={isMobile ? { padding: 0.2, minZoom: 0.6, maxZoom: 1 } : { padding: 0.25 }}
+      <GraphHoverContext.Provider value={hoveredId}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeMouseEnter={onNodeMouseEnter}
+          onNodeMouseLeave={onNodeMouseLeave}
+          onInit={onInit}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          nodeDragThreshold={isMobile ? 8 : 1}
+          fitView={!isMobile}
+          fitViewOptions={{ padding: 0.25 }}
+          minZoom={isMobile ? 0.45 : 0.2}
+          maxZoom={1.5}
+          nodesConnectable={false}
+          elementsSelectable={false}
+          proOptions={{ hideAttribution: true }}
+          className="bg-surface"
         >
-          <ControlButton onClick={() => setShowHelp(true)} aria-label="How to use this graph">
-            <span className="text-sm font-semibold leading-none">?</span>
-          </ControlButton>
-        </Controls>
-      </ReactFlow>
+          <Background variant={BackgroundVariant.Dots} gap={28} size={1.5} color="#222a3d" />
+          <Controls
+            showInteractive={false}
+            position={isMobile ? "top-right" : "bottom-left"}
+            fitViewOptions={isMobile ? { padding: 0.2, minZoom: 0.6, maxZoom: 1 } : { padding: 0.25 }}
+          >
+            <ControlButton onClick={() => setShowHelp(true)} aria-label="How to use this graph">
+              <span className="text-sm font-semibold leading-none">?</span>
+            </ControlButton>
+          </Controls>
+        </ReactFlow>
+      </GraphHoverContext.Provider>
 
       {showHelp && <HelpPopup onClose={closeHelp} />}
     </div>
