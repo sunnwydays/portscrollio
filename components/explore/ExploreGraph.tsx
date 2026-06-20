@@ -23,7 +23,7 @@ import { FloatingEdge } from "@/components/explore/FloatingEdge";
 const nodeTypes: NodeTypes = { post: PostNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
 
-const MOBILE_EDGE_STYLE = { stroke: "#adc6ff", strokeOpacity: 0.6, strokeWidth: 3 };
+const MOBILE_EDGE_STYLE = { stroke: "#dae2fd", strokeOpacity: 0.7, strokeWidth: 3 };
 
 const MOBILE_QUERY = "(max-width: 1023px)";
 const HELP_SEEN_KEY = "explore-graph-help-seen";

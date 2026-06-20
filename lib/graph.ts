@@ -19,7 +19,7 @@ type SimLink = SimulationLinkDatum<SimNode>;
 // Keep in sync with PostNode's rendered size (w-52 ≈ 208px, ~188px tall).
 export const NODE_WIDTH = 208;
 export const NODE_HEIGHT = 188;
-const EDGE_STYLE = { stroke: "#adc6ff", strokeOpacity: 0.35, strokeWidth: 1.5 };
+const EDGE_STYLE = { stroke: "#dae2fd", strokeOpacity: 0.6, strokeWidth: 2 };
 
 /**
  * Turn posts into React Flow nodes + edges with a force-directed layout.
