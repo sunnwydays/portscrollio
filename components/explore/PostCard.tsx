@@ -57,7 +57,7 @@ export function PostCard({ post, aspectRatio = 'aspect-video' }: PostCardProps) 
             {post.title}
           </h3>
           <p className="mt-2 text-xs text-on-surface/80">
-            {post.category} · {timeAgo(post.published_at)}
+            {timeAgo(post.published_at)}
           </p>
         </div>
       </Link>

@@ -67,7 +67,6 @@
     {
       "slug":          "my-first-post",
       "title":         "My First Post",
-      "category":      "Reflections",
       "video_url":     "",
       "thumbnail_url": "",
       "tags":          "LIFE",
@@ -80,7 +79,6 @@
     {
       "slug":          "a-video-post",
       "title":         "A Video Post",
-      "category":      "Engineering",
       "video_url":     "https://youtube.com/watch?v=dQw4w9WgXcQ",
       "thumbnail_url": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
       "tags":          "WEB",

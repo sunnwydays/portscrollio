@@ -56,7 +56,6 @@ export function PostNode({ data }: NodeProps<PostFlowNode>) {
             {post.title}
           </h3>
           <p className="mt-1.5 text-xs text-on-surface/70">
-            {post.category ? `${post.category} · ` : ""}
             {timeAgo(post.published_at)}
           </p>
         </div>

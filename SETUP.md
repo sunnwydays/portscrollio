@@ -104,7 +104,7 @@ CREATE TABLE posts (
   id            TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
   slug          TEXT,
   title         TEXT NOT NULL,
-  category      TEXT,
+
   video_url     TEXT,
   thumbnail_url TEXT,
   tags          TEXT NOT NULL DEFAULT '',
@@ -240,7 +240,7 @@ A post has two parts: a database row for metadata and an optional Markdown file 
 |--------|------|-------------|
 | `slug` | TEXT (nullable) | URL path. `/explore/[slug]`. Use kebab-case. Falls back to `id` if null |
 | `title` | TEXT | Display title |
-| `category` | TEXT (nullable) | Label shown on the card, e.g. `"Reflections"` |
+
 | `video_url` | TEXT (nullable) | YouTube URL. Set this if the post is a video |
 | `thumbnail_url` | TEXT (nullable) | Hero image. For YouTube videos: `https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg` |
 | `tags` | TEXT | Comma-separated tags |
@@ -414,7 +414,6 @@ Project 1:
 Post 1:
   Title: [Post Title]
   Slug: [url-kebab-case]
-  Category: [e.g. Reflections]
   YouTube URL: [optional]
   Thumbnail URL: [optional]
   Tags: [TAG ONE, TAG TWO]

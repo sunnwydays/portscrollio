@@ -75,9 +75,6 @@ export default async function PostPage({ params }: PageProps) {
     return (
       <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0 flex items-center justify-center">
         <div className="max-w-5xl mx-auto px-6 w-full">
-          <p className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3">
-            {post.category}
-          </p>
           <h1 className="font-display font-bold text-3xl lg:text-4xl text-on-surface leading-tight tracking-tight">
             {post.title}
           </h1>
@@ -124,9 +121,6 @@ export default async function PostPage({ params }: PageProps) {
 
       {/* Article */}
       <div className="max-w-5xl mx-auto px-6 -mt-8 mb-12 relative z-10">
-        <p className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3">
-          {post.category}
-        </p>
         <h1 className="font-display font-bold text-3xl lg:text-4xl text-on-surface leading-tight tracking-tight">
           {post.title}
         </h1>

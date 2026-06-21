@@ -16,7 +16,7 @@ export interface Post {
   id: string;
   slug?: string;
   title: string;
-  category: string | null;
+
   video_url: string | null;
   thumbnail_url: string | null;
   tags: string;
@@ -132,7 +132,7 @@ export const mockPosts: Post[] = [
     id: "post-1",
     slug: "6-dof-robot-arm-dorm",
     title: "Why I'm Building a 6-DOF Robot Arm for my Dorm",
-    category: "Hardware Engineering",
+
     video_url: "https://youtube.com",
     thumbnail_url: null,
     tags: "Hardware,Robotics",
@@ -146,7 +146,7 @@ export const mockPosts: Post[] = [
     id: "post-2",
     slug: "kernel-rust-day-45",
     title: "Writing a Kernel in Rust: Day 45 Update",
-    category: "Operating Systems",
+
     video_url: "https://youtube.com",
     thumbnail_url: null,
     tags: "Rust,Low-Level",
@@ -160,7 +160,7 @@ export const mockPosts: Post[] = [
     id: "post-3",
     slug: "training-llms-zero-dollars",
     title: "Training LLMs on $0: A Computer Engineer's Guide",
-    category: "Machine Learning",
+
     video_url: "https://youtube.com",
     thumbnail_url: null,
     tags: "Machine Learning,AI",

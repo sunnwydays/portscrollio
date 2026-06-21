@@ -197,7 +197,7 @@ function stepSQL(cfg) {
   // posts
   if (cfg.posts?.length) {
     lines.push('-- posts');
-    lines.push('INSERT INTO posts (id, slug, title, category, video_url, thumbnail_url, tags, bg_from, bg_to, duration, published_at) VALUES');
+    lines.push('INSERT INTO posts (id, slug, title, video_url, thumbnail_url, tags, bg_from, bg_to, duration, published_at) VALUES');
     lines.push(
       cfg.posts.map(p => {
         const publishedAt = p.published_at
@@ -205,7 +205,7 @@ function stepSQL(cfg) {
           : new Date().toISOString();
         return (
           `  (${sqlStr(uuid())}, ${sqlStr(p.slug || null)}, ${sqlStr(p.title)}, ` +
-          `${sqlStr(p.category || null)}, ${sqlStr(p.video_url || null)}, ${sqlStr(p.thumbnail_url || null)}, ` +
+          `${sqlStr(p.video_url || null)}, ${sqlStr(p.thumbnail_url || null)}, ` +
           `${sqlStr(p.tags || '')}, ${sqlStr(p.bg_from || '#1a2236')}, ${sqlStr(p.bg_to || '#0b1326')}, ` +
           `${sqlStr(p.duration || null)}, ${sqlStr(publishedAt)})`
         );
