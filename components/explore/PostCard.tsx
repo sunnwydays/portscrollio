@@ -1,21 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/lib/mock-data";
+import { getThumbSrc, timeAgo } from "@/lib/post-thumbnail";
 import { YouTubeIcon } from "@/components/icons";
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days < 1) return "today";
-  if (days < 7) return `${days}d ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return `${Math.floor(days / 365)}y ago`;
-}
-
-function getYouTubeId(url: string): string | null {
-  return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
-}
 
 interface PostCardProps {
   post: Post;
@@ -23,10 +10,8 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, aspectRatio = 'aspect-video' }: PostCardProps) {
-  const videoId = post.video_url ? getYouTubeId(post.video_url) : null;
   // Use explicit thumbnail > YouTube auto-thumb > gradient fallback
-  const thumbSrc = post.thumbnail_url
-    ?? (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null);
+  const thumbSrc = getThumbSrc(post);
 
   return (
     <article className="group flex flex-col bg-surface-container-low rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 hover:bg-surface-container-high">

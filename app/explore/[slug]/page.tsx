@@ -7,9 +7,35 @@ import remarkHtml from "remark-html";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
+import { PostCard } from "@/components/explore/PostCard";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+async function getRelatedPosts(post: Post): Promise<Post[]> {
+  const forwardSlugs = (post.related ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const [forward, reverse] = await Promise.all([
+    forwardSlugs.length > 0
+      ? supabase.from("posts").select("*").in("slug", forwardSlugs)
+      : { data: [] },
+    post.slug
+      ? supabase.from("posts").select("*").ilike("related", `%${post.slug}%`)
+      : { data: [] },
+  ]);
+
+  const seen = new Set<string>();
+  const result: Post[] = [];
+  for (const p of [...(reverse.data ?? []), ...(forward.data ?? [])] as Post[]) {
+    if (p.slug === post.slug || !p.slug || seen.has(p.slug)) continue;
+    seen.add(p.slug);
+    result.push(p);
+  }
+  return result;
 }
 
 async function getMarkdown(slug: string): Promise<string | null> {
@@ -36,7 +62,10 @@ export default async function PostPage({ params }: PageProps) {
   if (!data) notFound();
 
   const post = data as Post;
-  const html = await getMarkdown(slug);
+  const [html, relatedPosts] = await Promise.all([
+    getMarkdown(slug),
+    getRelatedPosts(post),
+  ]);
 
   if (!html && post.video_url) {
     const videoId = post.video_url.match(
@@ -62,6 +91,9 @@ export default async function PostPage({ params }: PageProps) {
                 className="w-full h-full"
               />
             </div>
+          )}
+          {relatedPosts.length > 0 && (
+            <RelatedSection posts={relatedPosts} />
           )}
         </div>
       </div>
@@ -121,7 +153,25 @@ export default async function PostPage({ params }: PageProps) {
             prose-img:max-h-80 prose-img:w-auto prose-img:mx-auto prose-img:rounded-xl"
           dangerouslySetInnerHTML={{ __html: html ?? "" }}
         />
+        {relatedPosts.length > 0 && (
+          <RelatedSection posts={relatedPosts} />
+        )}
       </div>
     </div>
+  );
+}
+
+function RelatedSection({ posts }: { posts: Post[] }) {
+  return (
+    <section className="my-12">
+      <h2 className="font-display font-bold text-xl text-on-surface mb-6">
+        	&gt;&gt;&nbsp; For the curious
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {posts.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div>
+    </section>
   );
 }
