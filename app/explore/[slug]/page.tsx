@@ -123,7 +123,7 @@ export default async function PostPage({ params }: PageProps) {
       </div>
 
       {/* Article */}
-      <div className="max-w-5xl mx-auto px-6 -mt-8 relative z-10">
+      <div className="max-w-5xl mx-auto px-6 -mt-8 mb-12 relative z-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3">
           {post.category}
         </p>
