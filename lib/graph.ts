@@ -32,13 +32,14 @@ export function buildGraph(posts: Post[]): { nodes: PostFlowNode[]; edges: Edge[
       .filter(Boolean);
     for (const target of related) {
       if (target === post.slug || !slugSet.has(target)) continue;
-      const key = `${post.slug}->${target}`;
+      const [a, b] = post.slug < target ? [post.slug, target] : [target, post.slug];
+      const key = `${a}-${b}`;
       if (edgeKeys.has(key)) continue;
       edgeKeys.add(key);
       edges.push({
         id: key,
-        source: post.slug,
-        target,
+        source: a,
+        target: b,
         type: "floating",
       });
     }

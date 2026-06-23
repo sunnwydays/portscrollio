@@ -19,7 +19,7 @@ import { Post } from "@/lib/mock-data";
 import { buildGraph, NODE_HEIGHT, NODE_WIDTH } from "@/lib/graph";
 import { PostNode, type PostFlowNode } from "@/components/explore/PostNode";
 import { FloatingEdge } from "@/components/explore/FloatingEdge";
-import { GraphHoverContext } from "@/components/explore/graph-hover-context";
+import { GraphHoverContext, type GraphHoverState } from "@/components/explore/graph-hover-context";
 
 const nodeTypes: NodeTypes = { post: PostNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
@@ -61,7 +61,7 @@ export function ExploreGraph({ posts }: ExploreGraphProps) {
 
 const HELP_ITEMS = [
   { text: "Each tile is a blog post or video. Tap to explore.", delay: "[animation-delay:140ms]" },
-  { text: "Arrows point from one post to the next in a topic.", delay: "[animation-delay:240ms]" },
+  { text: "Lines connect related posts. Hover a tile to see its connections light up.", delay: "[animation-delay:240ms]" },
   {
     text: "Drag the canvas to pan. Pinch or scroll to zoom. Drag tiles to rearrange.",
     delay: "[animation-delay:340ms]",
@@ -106,9 +106,6 @@ function HelpDiagram() {
           <stop offset="0%" stopColor="#4edea3" />
           <stop offset="100%" stopColor="#adc6ff" />
         </linearGradient>
-        <marker id="help-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0 0 L10 5 L0 10 Z" fill="#adc6ff" />
-        </marker>
       </defs>
 
       {/* Node glows (behind everything) */}
@@ -117,8 +114,8 @@ function HelpDiagram() {
       <circle cx="182" cy="79" r="30" fill="url(#help-glow)" className="graph-node-pulse [animation-delay:1700ms]" />
 
       {/* Core edges with flowing dashes and arrows */}
-      <path d="M36 73 L114 29" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" markerEnd="url(#help-arrow)" className="graph-edge-flow" />
-      <path d="M114 29 L182 79" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" markerEnd="url(#help-arrow)" className="graph-edge-flow [animation-delay:0.55s]" />
+      <path d="M36 73 L114 29" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow" />
+      <path d="M114 29 L182 79" stroke="url(#help-edge)" strokeWidth="2" fill="none" strokeLinecap="round" className="graph-edge-flow [animation-delay:0.55s]" />
 
       {/* Tiles on top */}
       <MiniTile x={14} y={58} fill="help-thumb-1" play />
@@ -179,38 +176,28 @@ function pickRandom<T>(arr: T[]): T | undefined {
   return arr.length ? arr[Math.floor(Math.random() * arr.length)] : undefined;
 }
 
-/**
- * Drives the graph's "firing" highlight (the same `hoveredId` the edges read) as
- * a signal that walks the directed graph: a node fires, then one of its targets
- * fires next, and so on, jumping to a fresh node when a chain dead-ends. It
- * prefers nodes currently in the viewport so the action stays on screen.
- *
- * - `autoStart` (mobile): the cascade starts on its own after mount, since there
- *   is no hover to ignite it.
- * - Desktop: dormant until `ignite(id)` is called from a tile hover; from then on
- *   the signal keeps propagating, reseeding wherever the next hover lands.
- *
- * Honors prefers-reduced-motion by falling back to a plain, static highlight.
- */
 function useGraphCascade({
   edges,
   autoStart,
   instanceRef,
   wrapperRef,
-  setHoveredId,
+  setFiring,
 }: {
   edges: Edge[];
   autoStart: boolean;
   instanceRef: RefObject<ReactFlowInstance<PostFlowNode, Edge> | null>;
   wrapperRef: RefObject<HTMLDivElement | null>;
-  setHoveredId: (id: string | null) => void;
+  setFiring: (current: string | null, prev?: string | null) => void;
 }) {
   const adjacency = useMemo(() => {
     const m = new Map<string, string[]>();
     for (const e of edges) {
-      const arr = m.get(e.source);
+      let arr = m.get(e.source);
       if (arr) arr.push(e.target);
       else m.set(e.source, [e.target]);
+      arr = m.get(e.target);
+      if (arr) arr.push(e.source);
+      else m.set(e.target, [e.source]);
     }
     return m;
   }, [edges]);
@@ -237,7 +224,7 @@ function useGraphCascade({
   // The node the signal just came from. It is never chosen as the next hop, so
   // the walk never fires straight back along a reciprocal (bidirectional) edge.
   const prevRef = useRef<string | null>(null);
-  // Trail of recently fired nodes so the walk doesn't get stuck on a tight cycle.
+  // Trail of recently fired nodes so the walk doesn't bounce back and forth.
   const recentRef = useRef<string[]>([]);
   const stepTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -290,7 +277,7 @@ function useGraphCascade({
       currentRef.current = next;
       recent.push(next);
       if (recent.length > RECENT_LIMIT) recent.shift();
-      setHoveredId(next);
+      setFiring(next, current);
       stepTimerRef.current = setTimeout(
         () => scheduleRef.current(),
         CASCADE_HOLD_MS + Math.random() * 500,
@@ -304,7 +291,7 @@ function useGraphCascade({
       currentRef.current = hoverSeedRef.current;
       prevRef.current = null;
       recentRef.current = [hoverSeedRef.current];
-      setHoveredId(hoverSeedRef.current);
+      setFiring(hoverSeedRef.current);
       stepTimerRef.current = setTimeout(
         () => scheduleRef.current(),
         CASCADE_HOLD_MS + Math.random() * 500,
@@ -315,14 +302,14 @@ function useGraphCascade({
     // Mobile autoplay: this burst is done. Rest, then a new random one starts.
     activeRef.current = false;
     playingRef.current = false;
-    setHoveredId(null);
+    setFiring(null);
     if (autoStart && !reducedMotion) {
       autoTimerRef.current = setTimeout(
         () => scheduleAutoRef.current(),
         CASCADE_REST_MS + Math.random() * CASCADE_REST_JITTER,
       );
     }
-  }, [adjacency, autoStart, reducedMotion, setHoveredId]);
+  }, [adjacency, autoStart, reducedMotion, setFiring]);
   useEffect(() => {
     scheduleRef.current = step;
   }, [step]);
@@ -336,7 +323,7 @@ function useGraphCascade({
       currentRef.current = id;
       prevRef.current = null;
       recentRef.current = [id];
-      setHoveredId(id);
+      setFiring(id);
       if (reducedMotion) return;
       activeRef.current = true;
       playingRef.current = true;
@@ -345,7 +332,7 @@ function useGraphCascade({
         CASCADE_HOLD_MS + Math.random() * 500,
       );
     },
-    [reducedMotion, setHoveredId],
+    [reducedMotion, setFiring],
   );
 
   // Desktop: a tile hover ignites (and keeps looping) a cascade from that node.
@@ -360,8 +347,8 @@ function useGraphCascade({
     modeRef.current = null;
     hoverSeedRef.current = null;
     if (stepTimerRef.current) clearTimeout(stepTimerRef.current);
-    setHoveredId(null);
-  }, [setHoveredId]);
+    setFiring(null);
+  }, [setFiring]);
 
   // Mobile: seed a random cascade, preferring an in-view node that can fire.
   const startAuto = useCallback(() => {
@@ -422,7 +409,11 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => buildGraph(posts), [posts]);
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [firing, setFiringState] = useState<GraphHoverState>({ current: null, prev: null });
+  const setFiring = useCallback(
+    (current: string | null, prev: string | null = null) => setFiringState({ current, prev }),
+    [],
+  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<ReactFlowInstance<PostFlowNode, Edge> | null>(null);
@@ -432,7 +423,7 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
     autoStart: isMobile,
     instanceRef,
     wrapperRef,
-    setHoveredId,
+    setFiring,
   });
 
   // Desktop: hovering a tile ignites a cascade from it that loops while hovered;
@@ -475,7 +466,7 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
 
   return (
     <div ref={wrapperRef} className="relative h-full w-full">
-      <GraphHoverContext.Provider value={hoveredId}>
+      <GraphHoverContext.Provider value={firing}>
         <ReactFlow
           nodes={nodes}
           edges={edges}

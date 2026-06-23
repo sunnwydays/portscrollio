@@ -127,10 +127,6 @@ body {
   animation: graph-node-pulse 2.6s ease-in-out infinite;
 }
 
-/* Explore graph edges: steady resting threads that fire on hover. */
-/* A single bright band sweeps source -> target. pathLength is normalized to
-   100, so the dash sits just before the start at offset 20 and clears past the
-   end at -100. */
 @keyframes edge-sweep {
   from { stroke-dashoffset: 20; }
   to { stroke-dashoffset: -100; }
@@ -138,11 +134,6 @@ body {
 @keyframes edge-emit {
   0% { transform: scale(0.6); opacity: 0.8; }
   100% { transform: scale(2.4); opacity: 0; }
-}
-@keyframes edge-arrive {
-  0%, 100% { transform: scale(0.5); opacity: 0; }
-  12% { opacity: 0.55; }
-  45% { transform: scale(2); opacity: 0; }
 }
 
 .edge-sweep {
@@ -154,11 +145,6 @@ body {
   transform-origin: center;
   animation: edge-emit linear infinite;
 }
-.edge-arrive {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: edge-arrive linear infinite;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .graph-help-overlay,
@@ -167,8 +153,7 @@ body {
   .graph-edge-flow,
   .graph-node-pulse,
   .edge-sweep,
-  .edge-emit,
-  .edge-arrive {
+  .edge-emit {
     animation: none;
   }
 }

@@ -3,8 +3,20 @@
 import { createContext } from "react";
 
 /**
- * The slug of the node currently hovered on the explore graph, or null.
- * Edges read this to decide whether to fire (this edge's source is hovered),
- * dim (another node is hovered), or rest (nothing hovered).
+ * The graph's firing state. `current` is the node the signal sits on (a hovered
+ * tile, or the head of an autoplay cascade). `prev` is the node it just came
+ * from, so the edge back to it can stay dim instead of sweeping the signal
+ * straight back one layer.
+ *
+ * Edges read this to decide whether to fire (an endpoint is `current` and the
+ * other endpoint is not `prev`), dim (another node is firing), or rest.
  */
-export const GraphHoverContext = createContext<string | null>(null);
+export interface GraphHoverState {
+  current: string | null;
+  prev: string | null;
+}
+
+export const GraphHoverContext = createContext<GraphHoverState>({
+  current: null,
+  prev: null,
+});
