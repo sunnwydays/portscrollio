@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const images = ["/autoronto_computer.jpg", "/screen_inception.jpg"] as const;
 
 export function PlaceholderImage() {
-  const [index, setIndex] = useState(() => (Math.random() < 0.5 ? 0 : 1));
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(Math.random() < 0.5 ? 0 : 1);
+  }, []);
 
   return (
     <button
