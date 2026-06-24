@@ -1,6 +1,38 @@
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
 import { ExploreGraph } from "@/components/explore/ExploreGraph";
+
+function getBlogReadingMinutes(): number {
+  const contentDir = path.join(process.cwd(), "content");
+  const files = fs.readdirSync(contentDir).filter((f) => f.endsWith(".md"));
+  let totalWords = 0;
+  for (const file of files) {
+    const text = fs.readFileSync(path.join(contentDir, file), "utf-8");
+    totalWords += text.split(/\s+/).filter(Boolean).length;
+  }
+  return totalWords / 238;
+}
+
+function getVideoMinutes(posts: Post[]): number {
+  let totalSeconds = 0;
+  for (const post of posts) {
+    if (!post.duration) continue;
+    const parts = post.duration.split(":").map(Number);
+    if (parts.length === 2) totalSeconds += parts[0] * 60 + parts[1];
+    else if (parts.length === 3) totalSeconds += parts[0] * 3600 + parts[1] * 60 + parts[2];
+  }
+  return totalSeconds / 60;
+}
+
+function pickRandom<T>(items: T[]): T | undefined {
+  if (items.length === 0) return undefined;
+  const index = crypto.randomInt(items.length);
+  return items[index];
+}
 
 export default async function ExplorePage() {
   const { data } = await supabase
@@ -9,6 +41,8 @@ export default async function ExplorePage() {
     .order("published_at", { ascending: false });
 
   const posts: Post[] = data ?? [];
+  const totalMinutes = Math.ceil(getBlogReadingMinutes() + getVideoMinutes(posts));
+  const randomPost = pickRandom(posts);
 
   return (
     <div className="h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0 overflow-hidden relative">
@@ -20,9 +54,21 @@ export default async function ExplorePage() {
           <span className="text-3xl lg:text-4xl">Sunny&apos;s&nbsp;</span>
           <span className="text-3xl lg:text-4xl text-primary">Thoughts</span>
         </h1>
-        <p className="mt-2 text-xs text-on-surface/70 leading-relaxed">
-          Take a look to find a new perspective.
-        </p>
+        <div className="mt-3 space-y-1 text-[10px] uppercase tracking-widest">
+          <p>
+            <span className="text-on-surface/50">Read everything </span>
+            <span className="text-primary font-semibold">{totalMinutes} min</span>
+          </p>
+          {randomPost && (
+            <Link
+              href={`/explore/${randomPost.slug ?? ""}`}
+              className="block text-on-surface/50 hover:text-on-surface transition-colors"
+            >
+              Read something{" "}
+              <span className="text-primary font-semibold">10 sec</span>
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="h-full w-full">
