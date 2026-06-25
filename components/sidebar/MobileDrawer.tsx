@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { CloseIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
+import { usePathname } from "next/navigation";
+import { CloseIcon, ForYouIcon, ExploreIcon, GitCommitIcon, TrendingUpIcon, DumbbellIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from "@/components/icons";
 import { ProfileAvatar } from "./ProfileAvatar";
 
 interface StatRow {
@@ -20,6 +21,13 @@ interface MobileDrawerProps {
 }
 
 export function MobileDrawer({ open, onClose, settings, stats, avatarCategories }: MobileDrawerProps) {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: "/", label: "For You", icon: ForYouIcon },
+    { href: "/explore", label: "Explore", icon: ExploreIcon },
+  ];
+
   // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -75,8 +83,27 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
           <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
         </div>
 
-        {/* Divider */}
-        <div className="mx-6 h-px bg-outline-variant/20" />
+        {/* Nav */}
+        <nav aria-label="Main navigation" className="px-4 pb-4 space-y-1">
+          {navLinks.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ${
+                  isActive
+                    ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
+                    : "text-on-surface/70 hover:text-on-surface hover:bg-surface-container"
+                }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
 
         {/* Activity Feed */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-3">
