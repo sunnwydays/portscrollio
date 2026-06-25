@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
 import { PostCard } from "@/components/explore/PostCard";
 import { PlaceholderImage } from "@/components/explore/PlaceholderImage";
+import { ImageLightbox } from "@/components/explore/ImageLightbox";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -150,22 +151,24 @@ export default async function PostPage({ params }: PageProps) {
           ))}
         </div>
 
-        <article
-          className="prose prose-invert prose-sm lg:prose-base max-w-none
-            prose-headings:font-display prose-headings:text-on-surface prose-headings:font-bold
-            prose-p:text-on-surface/80 prose-p:leading-relaxed
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-on-surface
-            prose-code:text-secondary prose-code:bg-surface-container prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-            prose-pre:bg-surface-container-low prose-pre:rounded-xl
-            prose-blockquote:border-primary prose-blockquote:text-outline
-            prose-img:max-h-80 prose-img:w-auto prose-img:mx-auto prose-img:rounded-xl
-            prose-table:border-collapse prose-th:bg-surface-container prose-th:text-on-surface prose-th:px-4 prose-th:py-2
-            prose-td:px-4 prose-td:py-2 prose-td:text-on-surface/80
-            prose-tr:border-b prose-tr:border-outline-variant/15
-            prose-del:text-outline"
-          dangerouslySetInnerHTML={{ __html: html ?? "" }}
-        />
+        <ImageLightbox>
+          <article
+            className="prose prose-invert prose-sm lg:prose-base max-w-none
+              prose-headings:font-display prose-headings:text-on-surface prose-headings:font-bold
+              prose-p:text-on-surface/80 prose-p:leading-relaxed
+              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+              prose-strong:text-on-surface
+              prose-code:text-secondary prose-code:bg-surface-container prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+              prose-pre:bg-surface-container-low prose-pre:rounded-xl
+              prose-blockquote:border-primary prose-blockquote:text-outline
+              prose-img:max-h-80 prose-img:w-auto prose-img:mx-auto prose-img:rounded-xl
+              prose-table:border-collapse prose-th:bg-surface-container prose-th:text-on-surface prose-th:px-4 prose-th:py-2
+              prose-td:px-4 prose-td:py-2 prose-td:text-on-surface/80
+              prose-tr:border-b prose-tr:border-outline-variant/15
+              prose-del:text-outline"
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+          />
+        </ImageLightbox>
         {relatedPosts.length > 0 && (
           <RelatedSection posts={relatedPosts} />
         )}
