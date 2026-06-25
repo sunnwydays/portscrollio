@@ -76,14 +76,26 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
       go(indexRef.current + (dy > 0 ? 1 : -1));
     };
 
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "j") {
+        e.preventDefault();
+        go(indexRef.current + 1);
+      } else if (e.key === "ArrowUp" || e.key === "k") {
+        e.preventDefault();
+        go(indexRef.current - 1);
+      }
+    };
+
     el.addEventListener("wheel", onWheel, { passive: false });
     el.addEventListener("touchstart", onTouchStart, { passive: true });
     el.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
       el.removeEventListener("wheel", onWheel);
       el.removeEventListener("touchstart", onTouchStart);
       el.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("keydown", onKeyDown);
       if (wheelTimer.current) clearTimeout(wheelTimer.current);
     };
   }, [go]);
