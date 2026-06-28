@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/sidebar/MobileNav";
 import { supabase } from "@/lib/supabase";
 import { getLatestCommit } from "@/lib/github";
 import { getAvatarCategories } from "@/lib/avatars";
+import { SITE_URL } from "@/lib/site";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -19,9 +20,37 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const SITE_NAME = "SUNNY'S PORTSCROLLIO";
+const SITE_DESCRIPTION =
+  "UofT Computer Engineering. Learning, optimizing, and building things for a change.";
+
 export const metadata: Metadata = {
-  title: "SUNNY'S PORTSCROLLIO",
-  description: "UofT Computer Engineering. Learning, optimizing, and building things for a change.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    images: [
+      {
+        url: "/autoronto_computer.jpg",
+        alt: "Sunny working on the aUToronto self-driving car project",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: ["/autoronto_computer.jpg"],
+  },
 };
 
 export default async function RootLayout({
