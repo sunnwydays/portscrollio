@@ -72,9 +72,36 @@ export default async function RootLayout({
     (p: { id: string; slug?: string | null }) => p.slug ?? p.id
   ).filter(Boolean) as string[];
 
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Sunny",
+      url: SITE_URL,
+      jobTitle: "Computer Engineering Student",
+      affiliation: {
+        "@type": "CollegeOrUniversity",
+        name: "University of Toronto",
+      },
+      sameAs: [settings.github_url, settings.linkedin_url].filter(Boolean),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  ];
+
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="bg-surface text-on-surface font-body">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <Sidebar settings={settings} stats={stats} avatarCategories={avatarCategories} postSlugs={postSlugs} />
         <MobileHeader settings={settings} stats={stats} avatarCategories={avatarCategories} postSlugs={postSlugs} />
         <main className="lg:ml-70">{children}</main>

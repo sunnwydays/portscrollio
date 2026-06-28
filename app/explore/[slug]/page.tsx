@@ -10,7 +10,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
-import { SITE_DESCRIPTION } from "@/lib/site";
+import { SITE_URL, SITE_DESCRIPTION } from "@/lib/site";
 import { PostCard } from "@/components/explore/PostCard";
 import { ImageLightbox } from "@/components/explore/ImageLightbox";
 
@@ -120,6 +120,20 @@ export default async function PostPage({ params }: PageProps) {
     getRelatedPosts(post),
   ]);
 
+  const canonical = `${SITE_URL}/explore/${post.slug ?? post.id}`;
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    datePublished: post.published_at,
+    dateModified: post.published_at,
+    author: { "@type": "Person", name: "Sunny", url: SITE_URL },
+    image: post.thumbnail_url ?? `${SITE_URL}/autoronto_computer.jpg`,
+    url: canonical,
+    mainEntityOfPage: canonical,
+    keywords: post.tags,
+  };
+
   if (!html && post.video_url) {
     const videoId = post.video_url.match(
       /(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/
@@ -128,6 +142,12 @@ export default async function PostPage({ params }: PageProps) {
     return (
       <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0 flex items-center justify-center">
         <div className="max-w-5xl mx-auto px-6 w-full">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(articleLd).replace(/</g, "\\u003c"),
+            }}
+          />
           <h1 className="font-display font-bold text-3xl lg:text-4xl text-on-surface leading-tight tracking-tight">
             {post.title}
           </h1>
@@ -152,6 +172,12 @@ export default async function PostPage({ params }: PageProps) {
 
   return (
     <div className="min-h-dvh pt-14 lg:pt-0 pb-16 lg:pb-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleLd).replace(/</g, "\\u003c"),
+        }}
+      />
       {/* Hero */}
       <div className="relative h-48 lg:h-64 w-full overflow-hidden">
         {post.thumbnail_url && (
