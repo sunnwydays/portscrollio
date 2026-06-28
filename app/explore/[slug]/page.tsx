@@ -14,6 +14,17 @@ import { SITE_URL, SITE_DESCRIPTION } from "@/lib/site";
 import { PostCard } from "@/components/explore/PostCard";
 import { ImageLightbox } from "@/components/explore/ImageLightbox";
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const { data } = await supabase.from("posts").select("slug, id");
+  return (data ?? [])
+    .map((p: { slug?: string | null; id: string }) => ({
+      slug: p.slug ?? p.id,
+    }))
+    .filter((p) => Boolean(p.slug));
+}
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
