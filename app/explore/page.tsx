@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -5,6 +6,19 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
 import { ExploreGraph } from "@/components/explore/ExploreGraph";
+
+export const metadata: Metadata = {
+  title: "Explore",
+  description:
+    "A connected graph of Sunny's writing on engineering, learning, and building. Browse every thought and the threads between them.",
+  alternates: { canonical: "/explore" },
+  openGraph: {
+    title: "Explore · SUNNY'S PORTSCROLLIO",
+    description:
+      "A connected graph of Sunny's writing on engineering, learning, and building.",
+    url: "/explore",
+  },
+};
 
 function getBlogReadingMinutes(): number {
   const contentDir = path.join(process.cwd(), "content");
