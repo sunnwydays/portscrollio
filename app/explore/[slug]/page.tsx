@@ -1,5 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
+import { cache } from "react";
+import type { Metadata } from "next";
 import matter from "gray-matter";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
@@ -8,11 +10,70 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
+import { SITE_DESCRIPTION } from "@/lib/site";
 import { PostCard } from "@/components/explore/PostCard";
 import { ImageLightbox } from "@/components/explore/ImageLightbox";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+const getPost = cache(async (slug: string): Promise<Post | null> => {
+  const { data } = await supabase.from("posts").select("*").eq("slug", slug).single();
+  return (data as Post) ?? null;
+});
+
+const getRawMarkdown = cache(async (slug: string): Promise<string | null> => {
+  try {
+    return await fs.readFile(path.join(process.cwd(), "content", `${slug}.md`), "utf-8");
+  } catch {
+    return null;
+  }
+});
+
+function toExcerpt(markdown: string, max = 155): string {
+  const body = markdown
+    .replace(/^\s*\*[^*\n]+\*\s*/, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_`~]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return body.length > max ? `${body.slice(0, max).trimEnd()}...` : body;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) return { title: "Post not found", robots: { index: false } };
+
+  const raw = await getRawMarkdown(slug);
+  const description = raw ? toExcerpt(matter(raw).content) : SITE_DESCRIPTION;
+  const url = `/explore/${post.slug ?? post.id}`;
+  const image = post.thumbnail_url ?? "/autoronto_computer.jpg";
+  const tags = (post.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description,
+      url,
+      publishedTime: post.published_at,
+      tags,
+      images: [{ url: image, alt: post.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 async function getRelatedPosts(post: Post): Promise<Post[]> {
@@ -41,29 +102,19 @@ async function getRelatedPosts(post: Post): Promise<Post[]> {
 }
 
 async function getMarkdown(slug: string): Promise<string | null> {
-  try {
-    const filePath = path.join(process.cwd(), "content", `${slug}.md`);
-    const raw = await fs.readFile(filePath, "utf-8");
-    const { content } = matter(raw);
-    const result = await remark().use(remarkGfm).use(remarkHtml, { sanitize: false }).process(content);
-    return result.toString();
-  } catch {
-    return null;
-  }
+  const raw = await getRawMarkdown(slug);
+  if (!raw) return null;
+  const { content } = matter(raw);
+  const result = await remark().use(remarkGfm).use(remarkHtml, { sanitize: false }).process(content);
+  return result.toString();
 }
 
 export default async function PostPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  const post = await getPost(slug);
 
-  if (!data) notFound();
-
-  const post = data as Post;
+  if (!post) notFound();
   const [html, relatedPosts] = await Promise.all([
     getMarkdown(slug),
     getRelatedPosts(post),

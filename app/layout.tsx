@@ -8,7 +8,7 @@ import { MobileNav } from "@/components/sidebar/MobileNav";
 import { supabase } from "@/lib/supabase";
 import { getLatestCommit } from "@/lib/github";
 import { getAvatarCategories } from "@/lib/avatars";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -19,10 +19,6 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
-
-const SITE_NAME = "SUNNY'S PORTSCROLLIO";
-const SITE_DESCRIPTION =
-  "UofT Computer Engineering. Learning, optimizing, and building things for a change.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
