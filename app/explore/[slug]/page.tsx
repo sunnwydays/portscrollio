@@ -7,6 +7,7 @@ import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkHtml from "remark-html";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Post } from "@/lib/mock-data";
@@ -144,6 +145,16 @@ export default async function PostPage({ params }: PageProps) {
     mainEntityOfPage: canonical,
     keywords: post.tags,
   };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Explore", item: `${SITE_URL}/explore` },
+      { "@type": "ListItem", position: 3, name: post.title, item: canonical },
+    ],
+  };
+  const structuredData = [articleLd, breadcrumbLd];
 
   if (!html && post.video_url) {
     const videoId = post.video_url.match(
@@ -156,9 +167,10 @@ export default async function PostPage({ params }: PageProps) {
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
-              __html: JSON.stringify(articleLd).replace(/</g, "\\u003c"),
+              __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
             }}
           />
+          <Breadcrumb title={post.title} />
           <h1 className="font-display font-bold text-3xl lg:text-4xl text-on-surface leading-tight tracking-tight">
             {post.title}
           </h1>
@@ -186,13 +198,13 @@ export default async function PostPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleLd).replace(/</g, "\\u003c"),
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
         }}
       />
       {/* Hero */}
       <div className="relative h-48 lg:h-64 w-full overflow-hidden">
         {post.thumbnail_url && (
-          <Image src={post.thumbnail_url} alt="" fill className="object-cover" priority />
+          <Image src={post.thumbnail_url} alt="" fill sizes="(min-width: 1024px) calc(100vw - 17.5rem), 100vw" className="object-cover" priority />
         )}
         <div
           className="absolute inset-0"
@@ -211,6 +223,7 @@ export default async function PostPage({ params }: PageProps) {
 
       {/* Article */}
       <div className="max-w-5xl mx-auto px-6 -mt-8 mb-12 relative z-10">
+        <Breadcrumb title={post.title} />
         <h1 className="font-display font-bold text-3xl lg:text-4xl text-on-surface leading-tight tracking-tight">
           {post.title}
         </h1>
@@ -248,6 +261,30 @@ export default async function PostPage({ params }: PageProps) {
         )}
       </div>
     </div>
+  );
+}
+
+function Breadcrumb({ title }: { title: string }) {
+  return (
+    <nav aria-label="Breadcrumb" className="mb-3">
+      <ol className="flex items-center gap-1 text-xs text-on-surface/60">
+        <li>
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+        </li>
+        <li aria-hidden="true">/</li>
+        <li>
+          <Link href="/explore" className="hover:text-primary transition-colors">
+            Explore
+          </Link>
+        </li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page" className="truncate max-w-[20ch] lg:max-w-[40ch]">
+          {title}
+        </li>
+      </ol>
+    </nav>
   );
 }
 
