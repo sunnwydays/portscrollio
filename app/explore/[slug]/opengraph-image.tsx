@@ -14,10 +14,23 @@ export default async function Image({ params }: ImageProps) {
   const { slug } = await params;
   const { data } = await supabase
     .from("posts")
-    .select("title")
+    .select("title, thumbnail_url")
     .eq("slug", slug)
     .single();
   const title = (data?.title as string) ?? "Blog post";
+  const thumbnailUrl = (data?.thumbnail_url as string) ?? null;
+
+  if (thumbnailUrl) {
+    const res = await fetch(thumbnailUrl);
+    if (res.ok) {
+      return new Response(res.body, {
+        headers: {
+          "Content-Type": res.headers.get("content-type") ?? "image/webp",
+          "Cache-Control": "public, max-age=86400, s-maxage=86400",
+        },
+      });
+    }
+  }
 
   return new ImageResponse(
     (
