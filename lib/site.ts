@@ -4,4 +4,4 @@ export const SITE_URL =
 export const SITE_NAME = "SUNNY'S PORTSCROLLIO";
 
 export const SITE_DESCRIPTION =
-  "UofT Computer Engineering. Learning, optimizing, and building things for a change.";
+  "I'm an optimizer, learner, and thinker of deep and connected thoughts. Dvorak keyboard btw";

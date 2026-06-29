@@ -10,12 +10,12 @@ import { ExploreGraph } from "@/components/explore/ExploreGraph";
 export const metadata: Metadata = {
   title: "Explore",
   description:
-    "A connected graph of Sunny's writing on engineering, learning, and building. Browse every thought and the threads between them.",
+    "Ever think about gambling, sleep, and sidequesting (together)? I do! Come disagree with Sunny's connected thoughts on society, life, and tech.",
   alternates: { canonical: "/explore" },
   openGraph: {
-    title: "Explore · SUNNY'S PORTSCROLLIO",
+    title: "Explore - SUNNY'S PORTSCROLLIO",
     description:
-      "A connected graph of Sunny's writing on engineering, learning, and building.",
+      "Sunny's connected takes on society, life, and tech",
     url: "/explore",
   },
 };
