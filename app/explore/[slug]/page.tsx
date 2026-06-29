@@ -63,9 +63,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const raw = await getRawMarkdown(slug);
   const description = raw ? toExcerpt(matter(raw).content) : SITE_DESCRIPTION;
   const url = `/explore/${post.slug ?? post.id}`;
-  const image = post.thumbnail_url ?? "/autoronto_computer.jpg";
   const tags = (post.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
 
+  // og:image and twitter:image come from the colocated opengraph-image route,
+  // which Next.js wires up automatically and overrides any images set here.
   return {
     title: post.title,
     description,
@@ -77,13 +78,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url,
       publishedTime: post.published_at,
       tags,
-      images: [{ url: image, alt: post.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
-      images: [image],
     },
   };
 }
