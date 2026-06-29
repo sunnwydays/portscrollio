@@ -26,6 +26,7 @@ export default async function ResumePage() {
 
   return (
     <div className="flex flex-col min-h-dvh pt-14 lg:pt-0 pb-14 lg:pb-0">
+      <h1 className="sr-only">Sunny&apos;s resume</h1>
 
       {/* Top CTA — aggressive */}
       <div className="bg-surface-container-low px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

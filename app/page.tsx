@@ -10,5 +10,10 @@ export default async function ForYouPage() {
 
   const projects: Project[] = data ?? [];
 
-  return <VideoFeed projects={projects} initialPlaylist={buildPlaylist(projects)} />;
+  return (
+    <>
+      <h1 className="sr-only">Sunny&apos;s projects and demos</h1>
+      <VideoFeed projects={projects} initialPlaylist={buildPlaylist(projects)} />
+    </>
+  );
 }
