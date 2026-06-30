@@ -354,7 +354,9 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
     <article ref={articleRef} className="h-dvh bg-surface-dim">
 
       {/* ─── Mobile: full-screen ─────────────────────────────────────────── */}
-      <div className="lg:hidden h-full relative overflow-hidden">
+      {/* Inline position so the priority thumbnail's fill parent is positioned even before
+          Tailwind's stylesheet applies in dev, avoiding a decode-vs-CSS race warning. */}
+      <div className="lg:hidden h-full relative overflow-hidden" style={{ position: "relative" }}>
         {isDesktop === false && embedSrc && shouldMountIframe && (
           <iframe
             ref={iframeRef}
@@ -424,7 +426,8 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
         <div className="flex h-full items-center gap-4">
 
           {/* 9:16 video frame — matches vertical short format */}
-          <div className="group relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0">
+          {/* Inline position: see mobile wrapper note above (priority thumbnail fill race). */}
+          <div className="group relative h-[96dvh] aspect-9/16 rounded-2xl overflow-hidden ring-1 ring-outline-variant/15 shrink-0" style={{ position: "relative" }}>
             {isDesktop === true && embedSrc && shouldMountIframe && (
               <iframe
                 ref={iframeRef}
