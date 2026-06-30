@@ -61,26 +61,24 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Close button */}
-        <div className="flex justify-end p-4">
+        {/* Profile + close button */}
+        <div className="flex items-start justify-between px-6 pt-5 pb-4">
+          <div>
+            <div className="relative w-14 h-14 mb-3">
+              <ProfileAvatar categories={avatarCategories} />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
+            </div>
+            <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
+            <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
+            <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+            className="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors shrink-0"
             aria-label="Close navigation"
           >
             <CloseIcon className="w-5 h-5" />
           </button>
-        </div>
-
-        {/* Profile */}
-        <div className="px-6 pb-6">
-          <div className="relative w-14 h-14 mb-4">
-            <ProfileAvatar categories={avatarCategories} />
-            <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
-          </div>
-          <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
-          <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
-          <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
         </div>
 
         {/* Nav */}
