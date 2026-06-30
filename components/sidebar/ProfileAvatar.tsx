@@ -47,6 +47,7 @@ export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl",
   );
   const [pickedError, setPickedError] = useState(false);
   const [defaultError, setDefaultError] = useState(false);
+  const [pickedVisible, setPickedVisible] = useState(false);
 
   function handleClick() {
     if (!postSlugs || postSlugs.length === 0) return;
@@ -60,32 +61,39 @@ export function ProfileAvatar({ categories, className = "w-14 h-14 rounded-2xl",
     ? { onClick: handleClick, role: "button" as const, tabIndex: 0, className: "cursor-pointer" }
     : {};
 
-  const image =
-    src && !pickedError ? (
-      <Image
-        src={src}
-        alt="Profile photo"
-        width={56}
-        height={56}
-        className={`${className} object-cover`}
-        onError={() => setPickedError(true)}
-        priority
-      />
-    ) : !defaultError ? (
-      <Image
-        src={DEFAULT_SRC}
-        alt="Profile photo"
-        width={56}
-        height={56}
-        className={`${className} object-cover`}
-        onError={() => setDefaultError(true)}
-        priority
-      />
-    ) : (
-      <div className={`${className} bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary`}>
-        S
-      </div>
-    );
+  const showPicked = src && !pickedError;
+
+  const image = (
+    <div className="relative">
+      {!defaultError ? (
+        <Image
+          src={DEFAULT_SRC}
+          alt="Profile photo"
+          width={56}
+          height={56}
+          className={`${className} object-cover`}
+          onError={() => setDefaultError(true)}
+          priority
+        />
+      ) : (
+        <div className={`${className} bg-surface-container-high flex items-center justify-center text-2xl font-display font-bold text-primary`}>
+          S
+        </div>
+      )}
+      {showPicked && (
+        <Image
+          src={src}
+          alt="Profile photo"
+          width={56}
+          height={56}
+          className={`${className} object-cover absolute inset-0 transition-all duration-500 ${pickedVisible ? "opacity-100 scale-100" : "opacity-0 scale-110"}`}
+          onLoad={() => setPickedVisible(true)}
+          onError={() => setPickedError(true)}
+          priority
+        />
+      )}
+    </div>
+  );
 
   return <div {...wrapperProps}>{image}</div>;
 }

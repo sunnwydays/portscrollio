@@ -80,3 +80,4 @@ pnpm lint    # eslint
 - `@/*` path alias for imports.
 - pnpm for package management (not npm or yarn).
 - **No emdash or double hyphens** in git commits, code, or code comments. Use commas, colons, or single hyphens for separation.
+- **Commit style** — No conventional commit prefixes (no `fix:`, `feat:`, `style:`, `refactor:`, etc.). Start commit messages directly with a capitalized verb: "Remove blank space in mobile drawer", "Add subtle green glow to NavLink hover state".
