@@ -42,43 +42,39 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
   }, [open]);
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        className={`fixed inset-0 z-40 bg-surface-dim/80 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        aria-hidden="true"
-      />
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation drawer"
+      className={`fixed inset-0 z-50 bg-surface/92 backdrop-blur-[20px] flex flex-col transition-opacity duration-400 ease-out lg:hidden ${
+        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}
+    >
+        {/* Close button — absolutely positioned to match hamburger location */}
+        <button
+          onClick={onClose}
+          className="absolute top-0 right-0 h-14 flex items-center px-6 text-outline hover:text-on-surface transition-colors"
+          aria-label="Close navigation"
+        >
+          <CloseIcon className="w-5 h-5" />
+        </button>
 
-      {/* Drawer panel */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Navigation drawer"
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-surface-container-low/95 backdrop-blur-[20px] flex flex-col transition-transform duration-300 ease-in-out lg:hidden ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Profile + close button */}
-        <div className="flex items-start justify-between px-6 pt-5 pb-4">
-          <div>
-            <div className="relative w-14 h-14 mb-3">
+        {/* Profile */}
+        <div className="px-6 pt-6 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative w-14 h-14 shrink-0 rounded-2xl shadow-[0_1px_6px_rgba(0,0,0,0.12)]">
               <ProfileAvatar categories={avatarCategories} />
               <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" />
             </div>
-            <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
-            <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
-            <p className="text-sm text-primary mt-2 font-medium">{settings.status}</p>
+            <div>
+              <p className="font-display font-bold text-xl text-on-surface">Sunny</p>
+              <p className="text-sm text-on-surface/85 mt-0.5">UofT Computer Engineering</p>
+            </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors shrink-0"
-            aria-label="Close navigation"
-          >
-            <CloseIcon className="w-5 h-5" />
-          </button>
+          <div className="mt-6">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-on-surface/75 mb-1">Current Sprint</p>
+            <p className="text-sm text-primary font-medium leading-snug">{settings.status}</p>
+          </div>
         </div>
 
         {/* Nav */}
@@ -92,7 +88,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ${
                   isActive
-                    ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
+                    ? "bg-linear-to-r from-primary to-primary-container text-on-primary shadow-[0_2px_10px_rgba(78,222,163,0.2)]"
                     : "text-on-surface/70 hover:text-on-surface hover:bg-surface-container"
                 }`}
               >
@@ -108,7 +104,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
           <p className="text-[10px] font-semibold uppercase tracking-widest text-on-surface/75 mb-4">Activity Feed</p>
 
           {/* Latest commit */}
-          <div className="bg-surface-container rounded-xl p-4">
+          <div className="bg-surface-container rounded-xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
             <div className="flex items-center gap-2 mb-2">
               <GitCommitIcon className="w-4 h-4 text-secondary" />
               <span className="text-[10px] uppercase tracking-widest text-on-surface/75 font-semibold">Last Commit</span>
@@ -122,7 +118,7 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
             const progressVal = isProgress ? parseInt(stat.value) : 0;
 
             return (
-              <div key={stat.key} className="bg-surface-container rounded-xl p-4">
+              <div key={stat.key} className="bg-surface-container rounded-xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
                 <div className="flex items-center gap-2 mb-2">
                   {isProgress ? (
                     <TrendingUpIcon className="w-4 h-4 text-secondary" />
@@ -173,6 +169,5 @@ export function MobileDrawer({ open, onClose, settings, stats, avatarCategories 
           </div>
         </div>
       </div>
-    </>
   );
 }
