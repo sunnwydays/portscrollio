@@ -16,7 +16,7 @@ export function Sidebar({ settings, stats, avatarCategories, postSlugs }: Sideba
     <aside className="hidden lg:flex fixed inset-y-0 left-0 z-30 w-70 flex-col bg-surface-container-low">
       {/* Profile */}
       <div className="px-6 pt-8 pb-6">
-        <div className="relative w-14 h-14 mb-5">
+        <div className="relative w-14 h-14 mb-5 rounded-2xl shadow-[0_1px_6px_rgba(0,0,0,0.12)]">
           <ProfileAvatar categories={avatarCategories} postSlugs={postSlugs} />
           <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-low animate-pulse" aria-hidden="true" />
         </div>
@@ -42,7 +42,7 @@ export function Sidebar({ settings, stats, avatarCategories, postSlugs }: Sideba
 
         {/* Latest commit */}
         {settings.latest_commit && (
-          <div className="bg-surface-container rounded-xl p-4">
+          <div className="bg-surface-container rounded-xl p-4 shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
             <div className="flex items-center gap-2 mb-2">
               <GitCommitIcon className="w-4 h-4 text-secondary shrink-0" />
               <span className="text-[10px] uppercase tracking-widest text-on-surface/75 font-semibold">Last Commit</span>
@@ -57,7 +57,7 @@ export function Sidebar({ settings, stats, avatarCategories, postSlugs }: Sideba
           const progressVal = isProgress ? parseInt(stat.value) : 0;
 
           return (
-            <div key={stat.key} className="bg-surface-container rounded-xl p-4">
+            <div key={stat.key} className="bg-surface-container rounded-xl p-4 shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
               <div className="flex items-center gap-2 mb-2">
                 {isProgress ? (
                   <TrendingUpIcon className="w-4 h-4 text-secondary shrink-0" />

@@ -19,7 +19,9 @@ export function MobileHeader({ settings, stats, avatarCategories, postSlugs }: M
     <>
       <header className="fixed top-0 inset-x-0 z-30 h-14 flex items-center justify-between px-4 bg-surface-variant/60 backdrop-blur-[20px] lg:hidden">
         <div className="flex items-center gap-3">
-          <ProfileAvatar categories={avatarCategories} className="w-9 h-9 rounded-xl" postSlugs={postSlugs} />
+          <div className="rounded-xl shadow-[0_1px_6px_rgba(0,0,0,0.12)]">
+            <ProfileAvatar categories={avatarCategories} className="w-9 h-9 rounded-xl" postSlugs={postSlugs} />
+          </div>
           <div className="flex flex-col">
             <span className="font-display font-bold text-sm text-on-surface leading-tight">Sunny Wu</span>
             <span className="text-xs text-outline leading-tight">UofT Computer Engineering</span>
