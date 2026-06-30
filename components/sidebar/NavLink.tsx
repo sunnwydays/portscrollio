@@ -16,10 +16,10 @@ export function NavLink({ href, icon, children }: NavLinkProps) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ${
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-[background-color,color,box-shadow] duration-200 ${
         isActive
-          ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
-          : "text-on-surface/70 hover:text-on-surface hover:bg-surface-container"
+          ? "bg-linear-to-r from-primary to-primary-container text-on-primary shadow-[0_2px_14px_rgba(78,222,163,0.35)]"
+          : "text-on-surface/70 hover:text-on-surface hover:bg-surface-container hover:shadow-[0_2px_10px_rgba(78,222,163,0.18)]"
       }`}
     >
       <span className="w-5 h-5 shrink-0">{icon}</span>
