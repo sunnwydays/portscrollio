@@ -9,11 +9,24 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export function buildPlaylist(projects: Project[]): Project[] {
+function placeLead(list: Project[], projects: Project[], leadSlug?: string): Project[] {
+  if (!leadSlug) return list;
+  const idx = list.findIndex((p) => (p.slug ?? p.id) === leadSlug);
+  if (idx === 0) return list;
+  if (idx > 0) {
+    const copy = [...list];
+    const [lead] = copy.splice(idx, 1);
+    return [lead, ...copy];
+  }
+  const lead = projects.find((p) => (p.slug ?? p.id) === leadSlug);
+  return lead ? [lead, ...list] : list;
+}
+
+export function buildPlaylist(projects: Project[], leadSlug?: string): Project[] {
   const primary = shuffle(projects.filter((p) => !p.is_hobby));
   const hobby = shuffle(projects.filter((p) => p.is_hobby));
 
-  if (primary.length === 0) return hobby;
+  if (primary.length === 0) return placeLead(hobby, projects, leadSlug);
 
   const total = projects.length;
   const fixedGap = total < 4 ? 1 : total < 7 ? 2 : 0;
@@ -34,5 +47,5 @@ export function buildPlaylist(projects: Project[]): Project[] {
     }
   }
 
-  return result;
+  return placeLead(result, projects, leadSlug);
 }
