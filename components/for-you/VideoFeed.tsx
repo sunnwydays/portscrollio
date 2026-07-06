@@ -22,6 +22,7 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
   const touchStartY = useRef(0);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingDir = useRef(0);
+  const syncedRef = useRef(false);
   const count = playlist.length;
 
   const handleToggleMute = useCallback(() => setMuted((m) => !m), []);
@@ -53,6 +54,19 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
     },
     [count, projects]
   );
+
+  useEffect(() => {
+    if (!syncedRef.current) {
+      syncedRef.current = true;
+      if (window.location.pathname === "/") return;
+    }
+    const current = playlist[index];
+    if (!current) return;
+    const target = `/watch/${current.id}`;
+    if (window.location.pathname !== target) {
+      window.history.replaceState(null, "", target);
+    }
+  }, [index, playlist]);
 
   useEffect(() => {
     const el = containerRef.current;

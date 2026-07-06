@@ -11,7 +11,7 @@ interface NavLinkProps {
 
 export function NavLink({ href, icon, children }: NavLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = pathname === href || (href === "/" && pathname.startsWith("/watch/"));
 
   return (
     <Link

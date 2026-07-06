@@ -1,19 +1,5 @@
-import { supabase } from "@/lib/supabase";
-import { VideoFeed } from "@/components/for-you/VideoFeed";
-import { Project } from "@/lib/mock-data";
-import { buildPlaylist } from "@/lib/playlist";
+import { FeedPage } from "@/components/for-you/FeedPage";
 
-export default async function ForYouPage() {
-  const { data } = await supabase
-    .from("projects")
-    .select("*")
-
-  const projects: Project[] = data ?? [];
-
-  return (
-    <>
-      <h1 className="sr-only">Sunny&apos;s projects and demos</h1>
-      <VideoFeed projects={projects} initialPlaylist={buildPlaylist(projects)} />
-    </>
-  );
+export default function ForYouPage() {
+  return <FeedPage />;
 }

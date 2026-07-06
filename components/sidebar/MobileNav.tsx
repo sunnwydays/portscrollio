@@ -18,7 +18,7 @@ export function MobileNav() {
       className="fixed bottom-0 inset-x-0 z-30 h-14 bg-surface-variant/60 backdrop-blur-[20px] border-t border-outline-variant/15 flex lg:hidden"
     >
       {links.map(({ href, label, icon: Icon }) => {
-        const isActive = pathname === href;
+        const isActive = pathname === href || (href === "/" && pathname.startsWith("/watch/"));
         return (
           <Link
             key={href}

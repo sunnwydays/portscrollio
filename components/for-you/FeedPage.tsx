@@ -1,0 +1,18 @@
+import { VideoFeed } from "@/components/for-you/VideoFeed";
+import { buildPlaylist } from "@/lib/playlist";
+import { getProjects } from "@/lib/feed";
+
+interface FeedPageProps {
+  leadId?: string;
+}
+
+export async function FeedPage({ leadId }: FeedPageProps) {
+  const projects = await getProjects();
+
+  return (
+    <>
+      <h1 className="sr-only">Sunny&apos;s projects and demos</h1>
+      <VideoFeed projects={projects} initialPlaylist={buildPlaylist(projects, leadId)} />
+    </>
+  );
+}
