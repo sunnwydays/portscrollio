@@ -182,13 +182,14 @@ function stepSQL(cfg) {
   // projects
   if (cfg.projects?.length) {
     lines.push('-- projects');
-    lines.push('INSERT INTO projects (id, title, description, video_url, github_url, website_url, tech, is_hobby, bg_from, bg_to, tags) VALUES');
+    lines.push('INSERT INTO projects (id, title, description, challenges, video_url, github_url, website_url, tech, is_hobby, bg_from, bg_to, tags, published_at) VALUES');
     lines.push(
       cfg.projects.map(p =>
-        `  (${sqlStr(uuid())}, ${sqlStr(p.title)}, ${sqlStr(p.description)}, ` +
+        `  (${sqlStr(uuid())}, ${sqlStr(p.title)}, ${sqlStr(p.description)}, ${sqlStr(p.challenges || '')}, ` +
         `${sqlStr(p.video_url)}, ${sqlStr(p.github_url)}, ${sqlStr(p.website_url || null)}, ` +
         `${sqlStr(p.tech || '')}, ${sqlBool(p.is_hobby)}, ` +
-        `${sqlStr(p.bg_from || '#1a2236')}, ${sqlStr(p.bg_to || '#0b1326')}, ${sqlStr(p.tags || '')})`
+        `${sqlStr(p.bg_from || '#1a2236')}, ${sqlStr(p.bg_to || '#0b1326')}, ${sqlStr(p.tags || '')}, ` +
+        `${sqlStr(p.published_at ? `${p.published_at}T00:00:00Z` : null)})`
       ).join(',\n') + ';'
     );
     lines.push('');
