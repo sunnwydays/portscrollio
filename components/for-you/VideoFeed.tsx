@@ -62,7 +62,7 @@ export function VideoFeed({ projects, initialPlaylist }: VideoFeedProps) {
     }
     const current = playlist[index];
     if (!current) return;
-    const target = `/watch/${current.id}`;
+    const target = `/watch/${current.slug ?? current.id}`;
     if (window.location.pathname !== target) {
       window.history.replaceState(null, "", target);
     }

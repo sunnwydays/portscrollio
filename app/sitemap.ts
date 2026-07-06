@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("posts")
       .select("slug, id, published_at")
       .order("published_at", { ascending: false }),
-    supabase.from("projects").select("id"),
+    supabase.from("projects").select("id, slug"),
   ]);
 
   const postEntries: MetadataRoute.Sitemap = (posts ?? [])
@@ -24,11 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .filter((e): e is NonNullable<typeof e> => e !== null);
 
-  const watchEntries: MetadataRoute.Sitemap = (projects ?? []).map((p: { id: string }) => ({
-    url: `${SITE_URL}/watch/${p.id}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
+  const watchEntries: MetadataRoute.Sitemap = (projects ?? []).map(
+    (p: { id: string; slug: string | null }) => ({
+      url: `${SITE_URL}/watch/${p.slug ?? p.id}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })
+  );
 
   const staticEntries: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "daily", priority: 1 },
