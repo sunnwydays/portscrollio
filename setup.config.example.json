@@ -38,20 +38,23 @@
 
   "projects": [
     {
-      "title":       "My Project",
-      "description": "One or two sentences describing what the project does and why it's interesting.",
-      "video_url":   "https://youtube.com/watch?v=dQw4w9WgXcQ",
-      "github_url":  "https://github.com/your-username/repo",
-      "website_url": "",
-      "tech":        "React,TypeScript,PostgreSQL",
-      "is_hobby":    false,
-      "bg_from":     "#1a2236",
-      "bg_to":       "#0b1326",
-      "tags":        "WEB,TYPESCRIPT"
+      "title":        "My Project",
+      "description":  "Two or three sentences describing the problem, your solution, and why it's interesting.",
+      "challenges":   "The core engineering challenge you solved\nAnother tricky problem you had to work through",
+      "video_url":    "https://youtube.com/watch?v=dQw4w9WgXcQ",
+      "github_url":   "https://github.com/your-username/repo",
+      "website_url":  "",
+      "tech":         "React,TypeScript,PostgreSQL",
+      "is_hobby":     false,
+      "bg_from":      "#1a2236",
+      "bg_to":        "#0b1326",
+      "tags":         "WEB,TYPESCRIPT",
+      "published_at": "2025-01-15"
     },
     {
       "title":       "A Hobby Clip",
       "description": "Something fun that is not a software project.",
+      "challenges":  "",
       "video_url":   "https://youtube.com/watch?v=dQw4w9WgXcQ",
       "github_url":  "https://github.com/your-username",
       "website_url": "",

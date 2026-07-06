@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Project } from "@/lib/mock-data";
+import { getYouTubeId } from "@/lib/post-thumbnail";
 import { GitHubIcon, GlobeIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
 const TECH_ICONS: Record<string, string> = {
@@ -22,10 +23,6 @@ const TECH_ICONS: Record<string, string> = {
   "BambuLab A1":    "/icons/tech/bambulab.webp",
   "Fusion 360":     "/icons/tech/fusion360.png",
 };
-
-function getYouTubeId(url: string): string | null {
-  return url.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1] ?? null;
-}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -77,6 +74,40 @@ function ActionButtons({ project, techList, labels, dimCircles = false, onOpenTe
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Video</span>}
         </a>
       )}
+    </div>
+  );
+}
+
+interface ProjectDescriptionProps {
+  description: string;
+  challenges: string[];
+}
+
+function ProjectDescription({ description, challenges }: ProjectDescriptionProps) {
+  const [expanded, setExpanded] = useState(false);
+  if (!description) return null;
+  return (
+    <div className="mt-2">
+      <p className={`text-on-surface/90 text-sm ${expanded ? "" : "line-clamp-2"}`}>
+        {description}
+      </p>
+      {challenges.length > 0 && (
+        <div className={expanded ? "" : "hidden"}>
+          <h3 className="sr-only">Engineering challenges</h3>
+          <ul className="list-disc list-inside mt-2 space-y-1 text-on-surface/80 text-sm">
+            {challenges.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <button
+        onClick={() => setExpanded((e) => !e)}
+        aria-expanded={expanded}
+        className="mt-1 text-xs font-bold uppercase tracking-wider text-secondary"
+      >
+        {expanded ? "less" : "...more"}
+      </button>
     </div>
   );
 }
@@ -144,6 +175,7 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
 
   const techList = (project.tech ?? "").split(",").map((t) => t.trim()).filter(Boolean);
   const hashtags = (project.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+  const challenges = (project.challenges ?? "").split(/\r?\n/).map((c) => c.trim()).filter(Boolean);
   const videoId = project.video_url ? getYouTubeId(project.video_url) : null;
   const videoLoaded = loadedKey === "loaded";
   const currentTimeRef = useRef<number>(0);
@@ -288,11 +320,10 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
       {videoId && (
         <Image
           src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          alt=""
+          alt={`${project.title} project demo thumbnail`}
           fill
           sizes="(min-width: 1024px) 54vh, 100vw"
           className="object-cover"
-          aria-hidden={true}
           priority={isFirst}
         />
       )}
@@ -334,8 +365,9 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
       />
 
       {/* Text overlay — mobile only; desktop shows title/tags in side panel */}
+      {/* z-16: must sit above the click-to-pause overlay (z-15) so taps on "...more" reach the button instead of toggling pause */}
       <div
-        className="absolute bottom-0 left-0 right-0 pl-5 pr-20 pt-6 pb-20 z-10 lg:hidden"
+        className="absolute bottom-0 left-0 right-0 pl-5 pr-20 pt-6 pb-20 z-16 lg:hidden"
         style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.67) 100%)" }}
       >
         <h2 className="font-display font-bold text-lg lg:text-xl text-on-surface leading-tight tracking-tight filter-[drop-shadow(0_2px_12px_black)_drop-shadow(0_4px_24px_rgba(0,0,0,0.9))]">
@@ -346,6 +378,7 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
             {[...hashtags, ...(project.is_hobby ? ["hobby"] : [])].map((t) => `#${t.toLowerCase()}`).join(" ")}
           </p>
         )}
+        <ProjectDescription description={project.description} challenges={challenges} />
       </div>
     </>
   );
@@ -420,6 +453,7 @@ export function VideoCard({ project, muted, onToggleMute, isNext = false, isFirs
               {[...hashtags, ...(project.is_hobby ? ["hobby"] : [])].map((t) => `#${t.toLowerCase()}`).join(" ")}
             </p>
           )}
+          <ProjectDescription description={project.description} challenges={challenges} />
         </div>
 
         {/* Center — video + action buttons grouped so the pair is what gets centered */}

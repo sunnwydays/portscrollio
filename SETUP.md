@@ -86,17 +86,19 @@ CREATE TABLE stats (
 
 -- For You feed (the vertical scroll)
 CREATE TABLE projects (
-  id          TEXT    PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
-  title       TEXT    NOT NULL,
-  description TEXT    NOT NULL,
-  video_url   TEXT    NOT NULL,
-  github_url  TEXT    NOT NULL,
-  website_url TEXT,
-  tech        TEXT    NOT NULL DEFAULT '',
-  is_hobby    BOOLEAN NOT NULL DEFAULT false,
-  bg_from     TEXT    NOT NULL DEFAULT '#1a2236',
-  bg_to       TEXT    NOT NULL DEFAULT '#0b1326',
-  tags        TEXT    NOT NULL DEFAULT ''
+  id           TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  title        TEXT        NOT NULL,
+  description  TEXT        NOT NULL,
+  challenges   TEXT        NOT NULL DEFAULT '',
+  video_url    TEXT        NOT NULL,
+  github_url   TEXT        NOT NULL,
+  website_url  TEXT,
+  tech         TEXT        NOT NULL DEFAULT '',
+  is_hobby     BOOLEAN     NOT NULL DEFAULT false,
+  bg_from      TEXT        NOT NULL DEFAULT '#1a2236',
+  bg_to        TEXT        NOT NULL DEFAULT '#0b1326',
+  tags         TEXT        NOT NULL DEFAULT '',
+  published_at TIMESTAMPTZ
 );
 
 -- Explore grid (blog posts, write-ups, standalone videos)
@@ -214,7 +216,8 @@ Each row in the `projects` table becomes a card in the vertical scroll feed.
 | Column | Type | Description |
 |--------|------|-------------|
 | `title` | TEXT | Displayed on the video card |
-| `description` | TEXT | 1-2 sentences shown below the title |
+| `description` | TEXT | 2-3 sentence overview shown below the title (truncated to 2 lines with a "...more" toggle) |
+| `challenges` | TEXT | Bullet points on core engineering challenges, one per line. Shown when a card's description is expanded, and fed into each video's structured data for SEO |
 | `video_url` | TEXT | Full YouTube URL (`https://youtube.com/watch?v=...`) |
 | `github_url` | TEXT | Repository link |
 | `website_url` | TEXT (nullable) | Live site link, shown as a globe icon if set |
@@ -223,6 +226,7 @@ Each row in the `projects` table becomes a card in the vertical scroll feed.
 | `bg_from` | TEXT | Gradient start color (hex). Stick to dark colors like `#1a2236` |
 | `bg_to` | TEXT | Gradient end color (hex) |
 | `tags` | TEXT | Comma-separated, all caps: `"DISTRIBUTED SYSTEMS,RUST"` |
+| `published_at` | TIMESTAMPTZ (nullable) | When the project video went up. Used as `uploadDate` in the page's video structured data |
 
 **On the hobby flag:** The playlist shuffler automatically weaves `is_hobby = true` rows between your main projects. I use it for side projects, sport clips, or anything that breaks up the professional content. It makes the feed feel less monotonous.
 
@@ -397,7 +401,8 @@ is_hobby: yes means the project is interleaved as a palette-cleanser between mai
 
 Project 1:
   Title: [Project Name]
-  Description: [1-2 sentences]
+  Description: [2-3 sentence overview]
+  Challenges: [one engineering challenge per line]
   YouTube URL: [paste URL]
   GitHub URL: [paste URL]
   Website URL: [optional, or leave blank]
@@ -406,6 +411,7 @@ Project 1:
   Gradient from: [hex, e.g. #1a2236]
   Gradient to: [hex, e.g. #0b1326]
   Tags: [TAG ONE, TAG TWO]
+  Published at: [optional date the video went up, e.g. 2024-02-10]
 
 ---
 
