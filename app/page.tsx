@@ -4,7 +4,7 @@ import { getProjects } from "@/lib/feed";
 import { getYouTubeId } from "@/lib/post-thumbnail";
 
 export const metadata: Metadata = {
-  title: "For You",
+  title: "For You - SUNNY'S PORTSCROLLIO",
   description:
     "Watch project demos across distributed systems, robotics, kernels, and machine learning, with code and engineering breakdowns.",
   alternates: { canonical: "/" },
