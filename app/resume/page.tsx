@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "The PDF is a boring list. See what Sunny built and why on the For You feed.",
   alternates: { canonical: "/resume" },
   openGraph: {
-    title: "Resume · SUNNY'S PORTSCROLLIO",
+    title: "Resume - SUNNY'S PORTSCROLLIO",
     description: "The PDF is a boring list. See what Sunny built and why.",
     url: "/resume",
   },
