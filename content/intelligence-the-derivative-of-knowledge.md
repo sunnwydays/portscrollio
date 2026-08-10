@@ -50,7 +50,7 @@ While the case may appear the same with entrepreneurs, it
 actually raises a new question in a slightly different way. The key difference
 being money is a lot more tangible than subscribers, where the stakes for 
 resetting are greater than for a YouTuber creating channels on the side.
-Entrepreneurs [take risks even if it puts them into debt](/trust-that-you-can-catch-yourself) - yet
+Entrepreneurs [take risks even if it puts them into debt](/explore/trust-that-you-can-catch-yourself) - yet
 they gain from their losses because the wealth isn't in the money, it's in the 
 first-hand experience of creation.
 
@@ -138,7 +138,7 @@ extent. That's [Goodhart's Law](https://en.wikipedia.org/wiki/Goodhart%27s_law):
 
 > When a measure becomes a target, it ceases to be a good measure.
 
-*(See my other blog on the [pragmatic defense of proxy-gaming](/gaming-the-proxy-a-defense-of-targeting-the-metric), where I discuss that optimizing strictly for the proxy is the only rational move, not a failure of intelligence)*
+*(See my other blog on the [pragmatic defense of proxy-gaming](/explore/gaming-the-proxy-a-defense-of-targeting-the-metric), where I discuss that optimizing strictly for the proxy is the only rational move, not a failure of intelligence)*
 
 The practice shows up in the form of Leetcode. At the time of writing, there are
 4009 questions on the website. Memorizing all the solutions would likely get
