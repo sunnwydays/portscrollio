@@ -40,6 +40,9 @@ const RECENT_LIMIT = 4;
 // random firings don't feel metronomic.
 const CASCADE_REST_MS = 1200;
 const CASCADE_REST_JITTER = 2600;
+// Comfortably above the recency-ranked base z-index any tile can have, so a
+// dragged tile always renders on top regardless of post count.
+const DRAGGING_Z_INDEX = 1_000_000;
 
 interface ExploreGraphProps {
   posts: Post[];
@@ -433,6 +436,28 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
     [ignite],
   );
 
+  // While a tile is being dragged, it should render above every other tile
+  // (and their edges) instead of ducking behind whatever it's dragged over.
+  const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const onNodeDragStart = useCallback(
+    (_: unknown, node: PostFlowNode) => {
+      pause();
+      setDraggingNodeId(node.id);
+    },
+    [pause],
+  );
+  const onNodeDragStop = useCallback(() => {
+    resume();
+    setDraggingNodeId(null);
+  }, [resume]);
+  const displayNodes = useMemo(
+    () =>
+      draggingNodeId
+        ? nodes.map((n) => (n.id === draggingNodeId ? { ...n, zIndex: DRAGGING_Z_INDEX } : n))
+        : nodes,
+    [nodes, draggingNodeId],
+  );
+
   const [showHelp, setShowHelp] = useState(() => {
     if (!isMobile) return false;
     try {
@@ -468,7 +493,7 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
     <div ref={wrapperRef} className="relative h-full w-full">
       <GraphHoverContext.Provider value={firing}>
         <ReactFlow
-          nodes={nodes}
+          nodes={displayNodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -477,8 +502,8 @@ function Graph({ posts, isMobile }: { posts: Post[]; isMobile: boolean }) {
           onInit={onInit}
           onMoveStart={pause}
           onMoveEnd={resume}
-          onNodeDragStart={pause}
-          onNodeDragStop={resume}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           nodeDragThreshold={isMobile ? 8 : 1}

@@ -64,10 +64,18 @@ export function buildGraph(posts: Post[]): { nodes: PostFlowNode[]; edges: Edge[
     .stop()
     .tick(400);
 
+  // Stack newer posts above older ones by default, so a recent tile isn't
+  // hidden under an older neighbor it happens to overlap.
+  const byRecency = [...linkable].sort(
+    (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
+  );
+  const zIndexBySlug = new Map(byRecency.map((post, rank) => [post.slug, byRecency.length - rank]));
+
   const nodes: PostFlowNode[] = linkable.map((post, i) => ({
     id: post.slug,
     type: "post",
     position: { x: simNodes[i].x ?? 0, y: simNodes[i].y ?? 0 },
+    zIndex: zIndexBySlug.get(post.slug),
     data: { post },
   }));
 
