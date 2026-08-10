@@ -58,6 +58,13 @@ export function FloatingEdge({ id, source, target }: EdgeProps) {
   const side = pairHash % 2 === 0 ? 1 : -1;
   const curvature = 0.12 + (Math.abs(pairHash % 100) / 100) * 0.13;
   const offset = Math.max(dist * curvature, 20) * side;
+
+  // Give each source/target pair a stable, slightly different resting hue so
+  // dense clusters of overlapping edges stay visually distinguishable.
+  const hue = 200 + (Math.abs(pairHash) % 90);
+  const sat = 30 + (Math.abs(pairHash >> 4) % 35);
+  const light = 60 + (Math.abs(pairHash >> 8) % 24);
+  const restStroke = `hsl(${hue} ${sat}% ${light}%)`;
   const px = -dy / dist;
   const py = dx / dist;
   const cx = (sx + tx) / 2 + px * offset;
@@ -95,7 +102,7 @@ export function FloatingEdge({ id, source, target }: EdgeProps) {
       <path
         d={pathD}
         fill="none"
-        stroke={isActive ? "#6ffbbe" : "#adc6ff"}
+        stroke={isActive ? "#6ffbbe" : restStroke}
         strokeWidth={isActive ? 2.5 : 1.5}
         strokeLinecap="round"
         filter={`url(#${shadowId})`}
