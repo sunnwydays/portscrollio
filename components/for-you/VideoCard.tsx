@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Project } from "@/lib/mock-data";
 import { getYouTubeId } from "@/lib/post-thumbnail";
-import { GitHubIcon, GlobeIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
+import { GitHubIcon, GlobeIcon, ArticleIcon, YouTubeIcon, StackIcon, CloseIcon, VolumeOffIcon, VolumeOnIcon, PlayIcon, PauseIcon } from "@/components/icons";
 
 const TECH_ICONS: Record<string, string> = {
   "React":          "/icons/tech/react.png",
@@ -54,6 +54,15 @@ function ActionButtons({ project, techList, labels, dimCircles = false, onOpenTe
             <GlobeIcon className="w-6 h-6" />
           </div>
           {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Site</span>}
+        </a>
+      )}
+      {project.blog_url && (
+        <a href={project.blog_url} target="_blank" rel="noopener noreferrer" aria-label="Read the blog post"
+          className="flex flex-col items-center gap-1.5 group">
+          <div className={`w-12 h-12 rounded-full ${circleBg} backdrop-blur-[1px] flex items-center justify-center text-on-surface group-hover:text-primary transition-all`}>
+            <ArticleIcon className="w-6 h-6" />
+          </div>
+          {labels && <span className="text-[10px] uppercase tracking-wider text-on-surface/90 group-hover:text-primary transition-colors">Blog</span>}
         </a>
       )}
       {techList.length > 0 && (

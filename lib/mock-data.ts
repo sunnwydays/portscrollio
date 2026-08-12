@@ -8,6 +8,7 @@ export interface Project {
   video_url: string;
   github_url: string;
   website_url?: string;
+  blog_url?: string | null;
   tech: string;
   is_hobby: boolean;
   bg_from: string;
