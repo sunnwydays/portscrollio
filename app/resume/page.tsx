@@ -59,31 +59,6 @@ export default async function ResumePage({
         </Link>
       </div>
 
-      {/* Version toggle, only shown when more than one resume is configured */}
-      {available.length > 1 && (
-        <nav aria-label="Resume version" className="px-6 py-3 flex justify-center">
-          <div className="flex gap-1 p-1 rounded-full bg-surface-container-high">
-            {available.map((version) => {
-              const isActive = version.id === active?.id;
-              return (
-                <Link
-                  key={version.id}
-                  href={version.id === available[0].id ? "/resume" : `/resume?v=${version.id}`}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                    isActive
-                      ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
-                      : "text-secondary hover:text-on-surface"
-                  }`}
-                >
-                  {version.label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      )}
-
       {/* PDF embed — desktop/tablet only */}
       {resumeUrl && (
         <div className="hidden md:flex flex-1">
@@ -112,7 +87,29 @@ export default async function ResumePage({
       )}
 
       {/* Bottom CTA — aggressive */}
-      <div className="bg-surface-container px-6 py-10 flex flex-col items-center gap-3 text-center">
+      <div className="bg-surface-container px-6 py-6 flex flex-col items-center gap-3 text-center">
+        {/* Version toggle shown when more than one resume is configured */}
+        {available.length > 1 && (
+          <nav aria-label="Resume version" className="self-center md:self-end flex gap-0.5 p-0.5 rounded-full bg-surface-container-high">
+            {available.map((version) => {
+              const isActive = version.id === active?.id;
+              return (
+                <Link
+                  key={version.id}
+                  href={version.id === available[0].id ? "/resume" : `/resume?v=${version.id}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                    isActive
+                      ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
+                      : "text-secondary hover:text-on-surface"
+                  }`}
+                >
+                  {version.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
         <p className="font-display font-bold text-2xl text-on-surface">
           Watch, don&apos;t read
         </p>
