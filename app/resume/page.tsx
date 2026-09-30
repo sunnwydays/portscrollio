@@ -15,14 +15,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ResumePage() {
+const VERSIONS = [
+  { id: "software", label: "Software", key: "resume_url" },
+  { id: "hardware", label: "Hardware", key: "resume_hardware_url" },
+] as const;
+
+export default async function ResumePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { v } = await searchParams;
   const { data } = await supabase
     .from("settings")
-    .select("value")
-    .eq("key", "resume_url")
-    .single();
+    .select("key, value")
+    .in("key", VERSIONS.map((version) => version.key));
 
-  const resumeUrl = data?.value ?? "";
+  const urls = new Map((data ?? []).map((row) => [row.key, row.value ?? ""]));
+  const available = VERSIONS.filter((version) => urls.get(version.key));
+  const active = available.find((version) => version.id === v) ?? available[0];
+  const resumeUrl = active ? urls.get(active.key) ?? "" : "";
 
   return (
     <div className="flex flex-col min-h-dvh pt-14 lg:pt-0 pb-14 lg:pb-0">
@@ -47,13 +59,39 @@ export default async function ResumePage() {
         </Link>
       </div>
 
+      {/* Version toggle, only shown when more than one resume is configured */}
+      {available.length > 1 && (
+        <nav aria-label="Resume version" className="px-6 py-3 flex justify-center">
+          <div className="flex gap-1 p-1 rounded-full bg-surface-container-high">
+            {available.map((version) => {
+              const isActive = version.id === active?.id;
+              return (
+                <Link
+                  key={version.id}
+                  href={version.id === available[0].id ? "/resume" : `/resume?v=${version.id}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                    isActive
+                      ? "bg-linear-to-r from-primary to-primary-container text-on-primary"
+                      : "text-secondary hover:text-on-surface"
+                  }`}
+                >
+                  {version.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+
       {/* PDF embed — desktop/tablet only */}
       {resumeUrl && (
         <div className="hidden md:flex flex-1">
           <iframe
+            key={resumeUrl}
             src={resumeUrl}
             className="w-full h-full min-h-[70dvh]"
-            title="Sunny Wu Resume"
+            title={`Sunny Wu ${active?.label ?? ""} Resume`}
           />
         </div>
       )}

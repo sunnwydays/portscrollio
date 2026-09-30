@@ -155,7 +155,8 @@ function stepSQL(cfg) {
   const githubUrl   = cfg.links?.github   || '';
   const linkedinUrl = cfg.links?.linkedin || '';
   const resumeUrl   = cfg.links?.resume   || '';
-  const status      = cfg.status          || '';
+  const resumeHwUrl = cfg.links?.resume_hardware || '';
+  const status     = cfg.status          || '';
 
   lines.push('-- settings');
   lines.push('INSERT INTO settings (key, value) VALUES');
@@ -163,6 +164,7 @@ function stepSQL(cfg) {
     `  ('github_url',   ${sqlStr(githubUrl)})`,
     `  ('linkedin_url', ${sqlStr(linkedinUrl)})`,
     `  ('resume_url',   ${sqlStr(resumeUrl)})`,
+    `  ('resume_hardware_url', ${sqlStr(resumeHwUrl)})`,
     `  ('status',       ${sqlStr(status)})`,
   ].join(',\n') + ';');
   lines.push('');
