@@ -22,6 +22,10 @@ const inter = Inter({
 
 export const viewport: Viewport = {
   themeColor: "#0b1326",
+  // Tells the browser this page is dark-themed, so native chrome (mobile overscroll
+  // bounce, form controls, scrollbars) fills with a UA dark color instead of defaulting
+  // to plain black/white where the page background doesn't reach.
+  colorScheme: "dark",
 };
 
 export const metadata: Metadata = {
